@@ -1,0 +1,154 @@
+@charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Raleway);
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+
+#header_question{
+    font-family: 'Poppins', sans-serif;
+}
+
+.ui-header-container {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background: lightgray;
+    display: block;
+    height: 17px;
+}
+
+.btn {
+    border: none; /* Remove borders */
+    color: white; /* Add a text color */
+    font-size: 12px;
+    padding: 3px 10px; /* Add some padding */
+    /* padding-bottom: 4px; */
+    cursor: pointer;
+    border-radius: 15px;
+    background-color: rgb(102, 184, 100, 0.7);
+    font-weight: bold; 
+    font-family: Arial;
+}
+
+.input_rec{
+    border-color: rgb(102, 184, 100, 0.7);
+}
+
+.btn:hover {
+    background-color: rgb(102, 184, 100, 1);
+}
+
+.ui-header {
+    height: 30px; }
+
+.header{
+    color: black;
+    font-weight: bold; 
+    font-family: Arial;}
+
+/* .add_name_button{
+    color: black;
+    font-weight: bold; 
+    font-family: Arial;;
+} */
+
+.add_name{
+    color: black;
+    font-weight: bold; 
+    font-family: Arial;
+    float: left;
+    padding-right: 10px;}
+
+/* .add_venue_name_button{
+    color: black;
+    font-weight: bold; 
+    font-family: Arial;;
+} */
+
+.add_venue{
+    color: black;
+    font-weight: bold; 
+    font-family: Arial;
+    float: left;
+    padding-right: 10px;}
+
+.ui-container {
+    display: table;
+    width: 100%;
+    margin-top: 0px;
+    /* header + menu */
+    padding-top: 0px;
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; }
+
+.ui-row {
+    height: 100%;
+    display: table-row; }
+
+#bodyVis, #headerVis {
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden; }
+      
+* {
+    margin: 0;
+    padding: 0; }
+
+.ui-column.ui-layout-east {
+    border-left: 1px solid #999; }
+      
+      
+.ui-column {
+    display: table-cell;
+    vertical-align: top;
+    padding-top: 0px;
+    padding-left: 20px;
+    padding-right: 0px; }
+
+.show_details{
+    border-bottom: 1px solid #636363;
+    margin-top: 12px;
+    margin-bottom: 3px;
+    padding-left: 5px; 
+}
+
+.brush rect.extent {
+    fill: darkgray;
+    /* fill: rgb(128,177,211); */
+    fill-opacity: .125;
+  }
+
+.brush .resize path {
+fill: #eee;
+stroke: #666;
+}
+
+.up_brush rect.extent {
+    fill: gray;
+    fill-opacity: .125;
+  }
+
+.up_brush .resize path {
+fill: #eee;
+stroke: #666;
+}
+
+.down_brush rect.extent {
+    fill: gray;
+    fill-opacity: .125;
+  }
+
+.down_brush .resize path {
+fill: #eee;
+stroke: #666;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: darkgray;
+    shape-rendering: crispEdges;
+    stroke-width: 1px;
+}
