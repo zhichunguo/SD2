@@ -939,27 +939,6 @@ def group(papers_list, group_by, num, result, property, group_lists):  ### prepa
                         if name not in temp_result:
                             temp_result[name] = []
                         temp_result[name].append(i)
-                    
-
-            # name_list = ['Chaoli Wang', 'Jun Tao']
-            # all_papers = {}
-            # for i in range(len(name_list)):
-            #     file = open('./authors_info_lists/' + name_list[i] + '.txt', 'r')
-            #     r = json.loads(file.read())
-            #     file.close()
-            #     for paper in r['papers']:
-            #         if paper not in all_papers:
-            #             all_papers[paper] = r['papers'][paper]
-            # for i in papers_list:
-            #     if i in all_papers:
-            #         all_papers[i]['publication'] = removeNonAscii(all_papers[i]['publication'])
-            #         print all_papers[i]['publication'] 
-            #         # all_papers[i]['publication'].encode('ascii', 'ignore')
-            #         # all_papers[i]['publication'].replace('\u2026', '')
-            #         rank = crawler_venue_type(all_papers[i]['publication'])
-            #         if rank not in temp_result:
-            #             temp_result[rank] = []
-            #         temp_result[rank].append(i)
 
         if num != 0:
             for j in temp_result:
@@ -1257,7 +1236,6 @@ def show_details(papers_list, property, group_by, group_lists):  ### prepare tre
     for i in group_by:
         if i == 'C. Venue Type' or i == 'C. Venue' or i == 'C. Year' or i == 'C. CCF Rank' or i == 'C. Citation Count':
             true = 1
-    print("lallallalalla    : ", true)
     if true == 0:
         group(papers_list, group_by, len(group_by) - 1, result['children'], property, group_lists)
     else:
@@ -1543,16 +1521,16 @@ def check_coauthor(id, urlname, name):    ### check clicked coauthor
 def user():
     print(request)
     id = request.args.get('num', default = 1, type = int)
-    if id == 0 or id == 1:
+    if id == 0 or id == 1:   ### add author to explore
         name = request.args.get('name', default = 1, type = str)
         return check(id, name)
 
-    elif id == 2:
+    elif id == 2:  ### add co_author to explore
         urlname = request.args.get('urlname', default = 1, type = str)
         name = request.args.get('name', default = 1, type = str)
         return check_coauthor(id, urlname, name)
 
-    elif id == 3:
+    elif id == 3:  ### prepare paper set to publication view
         orselect_list = request.args.get('orselect', default = 1, type = str)
         select_list = request.args.get('select', default = 1, type = str)
         unselect_list = request.args.get('unselect', default = 1, type = str)
@@ -1564,11 +1542,11 @@ def user():
         v_select_list = json.loads(v_select_list)
         v_unselect_list = json.loads(v_unselect_list)
         return show_histogram(orselect_list, select_list, unselect_list, v_select_list, v_unselect_list)
-    elif id == 4:
+    elif id == 4:   ### show co_author list in scholar view
         name = request.args.get('name', default=1, type=str)
         return show_coauthors(name)
 
-    elif id == 5:
+    elif id == 5:  ###  prepare paper set tree to show in hierarchical histogram view
         papers_list = request.args.get('list', default = 1, type = str)
         papers_list = json.loads(papers_list)
         property = request.args.get('property', default=1, type=str)
@@ -1599,7 +1577,7 @@ def user():
 
         # return show_details(papers_list, property, group_by, group_lists)
 
-    elif id == 10:
+    elif id == 10:  ### alignment requests
         papers_list = request.args.get('list', default = 1, type = str)
         papers_list = json.loads(papers_list)
         property = request.args.get('property', default=1, type=str)
@@ -1634,7 +1612,7 @@ def user():
         res['down_tree'] = query_result["second"]
         return jsonify(res)
 
-    elif id == 6:
+    elif id == 6:  ### bar grouping
         papers_list = request.args.get('list', default=1, type=str)
         papers_list = json.loads(papers_list)
         group_by = request.args.get('group_by', default=1, type=str)
@@ -1654,7 +1632,7 @@ def user():
 
         # return group_histogram(papers_list, group_by)
 
-    elif id == 7:
+    elif id == 7:  ## add venue to explore
         name = request.args.get('name', default = 1, type = str)
         return check_venue(name)
 
