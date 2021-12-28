@@ -36,13 +36,12 @@ The scholarlens_python library is a python library written in C++ to speedup the
 ## Web interface
 ### Introduction of each file
 
-SD2
+**SD2**
 
-- scholarlens.html / html.css / sunburst.css: Design website layout
+- **scholarlens.html / html.css / sunburst.css:** Design website layout
 
-- js
+- **js**
 
-  |
   
   **myjs.js:** Control scholar view, publication view. Also entry for hierarchical histogram view
   
