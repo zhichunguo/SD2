@@ -106,7 +106,7 @@ function dragended_logo(d){
         var number = 5;
         (function() {
             //var test = "http://98.220.5.15:1234/user";
-            var test = "http://140.82.48.134:1234/user";
+            var test = IP_address;
             $.getJSON( test, {
                 num : number,
                 list: JSON.stringify(Show_Sunbursts_all['up']['paper_list']),
@@ -127,7 +127,7 @@ function dragended_logo(d){
             Show_Sunbursts_all['down']['show_group_by'] = Show_Sunbursts_all['up']['show_group_by'];
             (function() {
                 //var test = "http://98.220.5.15:1234/user";
-                var test = "http://140.82.48.134:1234/user";
+                var test = IP_address;
                 $.getJSON( test, {
                     num : number,
                     list: JSON.stringify(Show_Sunbursts_all['down']['paper_list']),
@@ -167,7 +167,7 @@ function dragended_logo(d){
         var number = 5;
         (function() {
             //var test = "http://98.220.5.15:1234/user";
-            var test = "http://140.82.48.134:1234/user";
+            var test = IP_address;
             $.getJSON( test, {
                 num : number,
                 list: JSON.stringify(Show_Sunbursts_all['down']['paper_list']),
@@ -188,7 +188,7 @@ function dragended_logo(d){
             Show_Sunbursts_all['up']['show_group_by'] = Show_Sunbursts_all['down']['show_group_by'];
             (function() {
                 //var test = "http://98.220.5.15:1234/user";
-                var test = "http://140.82.48.134:1234/user";
+                var test = IP_address;
                 $.getJSON( test, {
                     num : number,
                     list: JSON.stringify(Show_Sunbursts_all['up']['paper_list']),

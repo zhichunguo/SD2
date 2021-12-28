@@ -32,7 +32,12 @@ def connectMYSQL(dbname):
     cur = db.cursor()
     return db, cur
 
-def headers(tree, result):
+def removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
+def removeNumber(s): return "".join(i for i in s if (i<'0' or i>'9'))
+
+
+
+def headers(tree, result):   #### Crawler head
     headers = tree.xpath(r'//div[@id = "gsc_prf_i"]')[0]
     result['name'] = headers.xpath(r'./div[@id = "gsc_prf_in"]/text()')[0]
     title = headers.xpath(r'./div[@class = "gsc_prf_il"]')[0]
@@ -60,7 +65,7 @@ def headers(tree, result):
         result['major in'] = ''
 
 
-def citations(tree, result):
+def citations(tree, result):   ### Check citation information on the author's google scholar page
     citations = tree.xpath(r'//div[@class = "gsc_rsb_s gsc_prf_pnl"]')[0]
     from_year = citations.xpath(r'./table[@id = "gsc_rsb_st"]/thead/tr/th/text()')[1][:4]
     table1 = citations.xpath(r'./table[@id = "gsc_rsb_st"]/tbody/tr/td/text()')
@@ -77,10 +82,9 @@ def citations(tree, result):
     for each in range(len(table2)/2):
         result['citation_eachyear'].append([table2[each], table2[each + len(table2)/2]])
 
-def removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
-def removeNumber(s): return "".join(i for i in s if (i<'0' or i>'9'))
 
-def co_authers(urlname, result):
+
+def co_authers(urlname, result):    ### Check co-authors information on the author's google scholar page
     getHeaders = {r"Host": r"scholar.google.com",
                     r"User-Agent": r"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.117 Safari/537.36",
                     r"Accept": r"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -123,7 +127,7 @@ def co_authers(urlname, result):
         print(author)
         result['co_authors'].append(author)
 
-def papers(urlname, tree, result):
+def papers(urlname, tree, result):   ### Check paper information. If this author's papers information have been saved in co_authors_list, just read it. Or craw the papers titles using google scholar and then check them in the database. 
     result['papers'] = {}
     db, cur = connectMYSQL('open_academic_graph')
 
@@ -261,7 +265,7 @@ def papers(urlname, tree, result):
         file.write(json.dumps(co_authors_papers))
         file.close()
 
-def co_papers(urlname, tree, result, author_result):
+def co_papers(urlname, tree, result, author_result):  ### Check the author's co-authors' papers' information
     co_authors_papers = {}
     co_authors_papers['titles'] = []
     co_authors_papers['ids'] = []
@@ -329,7 +333,7 @@ def co_papers(urlname, tree, result, author_result):
     result['paper_sum'] = paper_sum
     result['co_paper_sum'] = co_paper_sum
 
-def login_coauthor(urlname,author_result):
+def login_coauthor(urlname,author_result): ###  Check co-authors information on the co-author's google scholar page
     result = {}
     if os.path.exists("./co_authors_info_lists/" + urlname + ".txt"):
         file = open("./co_authors_info_lists/" + urlname + ".txt", 'r')
@@ -363,7 +367,7 @@ def login_coauthor(urlname,author_result):
         co_papers(urlname, tree, result, author_result)
     return result
 
-def dtails(urlname, tree):
+def dtails(urlname, tree):   ### explore more information of the author 
     result = {}
     headers(tree, result)
     if os.path.exists("./authors_info_lists/" + result['name'] + ".txt"):
@@ -382,7 +386,7 @@ def dtails(urlname, tree):
 
     return result
 
-def login(urlname):
+def login(urlname):   ### login to the author's google scholar page
     loginHeaders = {r"User-Agent": r"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36",
                     r"accept": r"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
                     r"accept-language": r"zh-CN,zh;q=0.9,en;q=0.8",
@@ -402,7 +406,7 @@ def login(urlname):
 
     return author_info
 
-def check(id, name):
+def check(id, name):  ### check if this author's information has been saved or need to be crawled.
     if id == 1 or id == 2:
         if id == 1:
             urlname = name
@@ -465,7 +469,7 @@ def check(id, name):
                 res['co_authors'] = ''
                 return jsonify(res)
 
-def show_histogram(orselect_list, select_list, unselect_list, v_select_list, v_unselect_list):
+def show_histogram(orselect_list, select_list, unselect_list, v_select_list, v_unselect_list):   ### Identify set operations and organize the paper set to scholar view
 
     venue_papers = {}
     for i in range(len(v_select_list)):
@@ -585,7 +589,7 @@ def show_histogram(orselect_list, select_list, unselect_list, v_select_list, v_u
         res['paper_info'] = ''
     return jsonify(res)
 
-def show_coauthors(name):
+def show_coauthors(name):  ### Click the author's name to show his co-authors
     res = {}
 
     if os.path.exists("./authors_info_lists/" + name + ".txt"):
@@ -600,58 +604,13 @@ def show_coauthors(name):
 
     return jsonify(res)
 
-# def show_details(papers_list):
-#     papers = {}
-#     db, cur = connectMYSQL('open_academic_graph')
-#     for i in papers_list:
-#         print i
-#         cur.execute("select * from papers_info_list where id = '" + i + "';")
-#         data = cur.fetchall()[0]
-#         if data[2] not in papers:
-#             papers[data[2]] = {}
-#             papers[data[2]][data[4]] = []
-#         elif data[4] not in papers[data[2]]:
-#             papers[data[2]][data[4]] = []
-#         one_paper = {}
-#         one_paper['name'] = data[1]
-#         #cur.execute("select count(*) from reference_list where reference_id = '" + i + "';")
-#         #one_paper['size'] = cur.fetchall()[0][0]
-#         one_paper['size'] = data[3]
-#         papers[data[2]][data[4]].append(one_paper)
-#
-#     result = {}
-#     result['name'] = 'flare'
-#     result['children'] = []
-#     year_list = []
-#     years = []
-#     for j in papers:
-#         year_list.append(j)
-#         year = {}
-#         year['name'] = j
-#         year['children'] = []
-#         for k in papers[j]:
-#             doc = {}
-#             doc['name'] = k
-#             doc['children'] = papers[j][k]
-#             year['children'].append(doc)
-#         years.append(year)
-#     year_list.sort()
-#     for i in year_list:
-#         for k in years:
-#             if k['name'] == i:
-#                  result['children'].append(k)
-#     print result
-#     res = {}
-#     res['num'] = 0
-#     res['tree'] = result
-#     return jsonify(res)
 def find_n_sub_str(src, sub, pos, start):
     index = src.find(sub, start)
     if index != -1 and pos > 0:
         return find_n_sub_str(src, sub, pos - 1, index + 1)
     return index
 
-def crawler_venue_type(name):
+def crawler_venue_type(name):  ### Check the venue's full name using google
     name = name.replace(" ", "+")
     name = name.replace("(", "%28")
     name = name.replace(")", "%29")
@@ -730,7 +689,7 @@ def hIndex(lists):
             return j
     return i
 
-def compute_size(papers_list, property):
+def compute_size(papers_list, property):  ### calculate paper set's citation, h-index and paper number
     db, cur = connectMYSQL('open_academic_graph')
     if property == '# Citations':
         num = 0
@@ -769,7 +728,7 @@ def compute_size(papers_list, property):
     elif property == '# Papers':
         return len(papers_list)
 
-def group(papers_list, group_by, num, result, property, group_lists):
+def group(papers_list, group_by, num, result, property, group_lists):  ### prepare tree for hierarchical histograms
     db, cur = connectMYSQL('open_academic_graph')
     temp_result = {}
 
@@ -1016,7 +975,7 @@ def group(papers_list, group_by, num, result, property, group_lists):
                 temp['size'] = compute_size(temp_result[j], property)
                 result.append(temp)
 
-def cite_compute_size(papers_list, property):
+def cite_compute_size(papers_list, property):  ### calculate the citation paper set's citation, h-index and paper number
     db, cur = connectMYSQL('open_academic_graph')
     if property == '# Citations':
         return len(papers_list)
@@ -1045,7 +1004,7 @@ def cite_compute_size(papers_list, property):
         return len(paper_list)
 
 
-def cite_group(papers_list, group_by, num, result, property, group_lists):
+def cite_group(papers_list, group_by, num, result, property, group_lists):   ### citation paper sets for hierarchical histograms
     db, cur = connectMYSQL('open_academic_graph')
     temp_result = {}
 
@@ -1290,7 +1249,7 @@ def cite_group(papers_list, group_by, num, result, property, group_lists):
                 temp['size'] = cite_compute_size(temp_result[j], property)
                 result.append(temp)
 
-def show_details(papers_list, property, group_by, group_lists):
+def show_details(papers_list, property, group_by, group_lists):  ### prepare tree for hierarchical histogram
     result = {}
     result['name'] = 'flare'
     result['children'] = []
@@ -1318,7 +1277,7 @@ def show_details(papers_list, property, group_by, group_lists):
     res['tree'] = result
     return jsonify(res)
 
-def show_details_venue(papers_list):
+def show_details_venue(papers_list): ### prepare venue part for hierarchical histogram
     papers = {}
     db, cur = connectMYSQL('open_academic_graph')
     for i in papers_list:
@@ -1365,7 +1324,7 @@ def show_details_venue(papers_list):
     res['tree'] = result
     return jsonify(res)
 
-def group_histogram(papers, group_by):
+def group_histogram(papers, group_by): 
     db, cur = connectMYSQL('open_academic_graph')
     all_papers = {}
     if group_by == 'P. Year':
@@ -1491,7 +1450,7 @@ def group_histogram(papers, group_by):
     print(res)
     return jsonify(res)
 
-def check_venue(name):
+def check_venue(name):   ### check input venue information
     res = {}
     if name == "TVCG" or name == "CHI":
         if name == "TVCG":
@@ -1564,7 +1523,7 @@ def check_venue(name):
         print(res)
         return jsonify(res)
 
-def check_coauthor(id, urlname, name):
+def check_coauthor(id, urlname, name):    ### check clicked coauthor
     if os.path.exists("./authors_info_lists/" + name + ".txt"):
         file = open("./authors_info_lists/" + name + ".txt", 'r')
         author_info = json.loads(file.read())

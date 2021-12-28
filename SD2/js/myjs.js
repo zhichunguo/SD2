@@ -1,3 +1,5 @@
+var IP_address = "http://140.82.48.134:1234/user"
+
 var up_down_colorlist = new Object();
 up_down_colorlist['up'] = d3.rgb(242,192,192);
 //up_down_colorlist['up'] = d3.rgb(255,153,153);
@@ -97,7 +99,7 @@ d3.select("#author_name")
         select_events.push(0);
         (function() {
             //var test = "http://98.220.5.15:1234/user";
-            var test = "http://140.82.48.134:1234/user";
+            var test = IP_address;
             $.getJSON( test, {
                 num : number,
                 name: name
@@ -131,7 +133,7 @@ d3.select("#venue_name")
         var number = 7;
         (function() {
             //var test = "http://98.220.5.15:1234/user";
-            var test = "http://140.82.48.134:1234/user";
+            var test = IP_address;
             $.getJSON( test, {
                 num : number,
                 name: name
@@ -169,7 +171,7 @@ function addName()
     select_events.push(0);
     (function() {
         //var test = "http://98.220.5.15:1234/user";
-        var test = "http://140.82.48.134:1234/user";
+        var test = IP_address;
         $.getJSON( test, {
             num : number,
             name: name
@@ -202,7 +204,7 @@ function addVenueName(){
     var number = 7;
     (function() {
         //var test = "http://98.220.5.15:1234/user";
-        var test = "http://140.82.48.134:1234/user";
+        var test = IP_address;
         $.getJSON( test, {
             num : number,
             name: name
@@ -230,7 +232,7 @@ function addCoauthor(urlname, name){
     var num = 2;
     (function() {
         //var test = "http://98.220.5.15:1234/user";
-        var test = "http://140.82.48.134:1234/user";
+        var test = IP_address;
         $.getJSON( test, {
             num : num,
             urlname: urlname,
@@ -536,7 +538,7 @@ function change_show_coauthor(name){
 
     (function() {
         //var test = "http://98.220.5.15:1234/user";
-        var test = "http://140.82.48.134:1234/user";
+        var test = IP_address;
         $.getJSON( test, {
             num : number,
             name: name
@@ -1457,7 +1459,7 @@ function addGraph(uid, select){
     if(aSelect.length != 0 || aOrSelect.length != 0 || vSelect.length != 0){
         (function() {
             //var test = "http://98.220.5.15:1234/user";
-            var test = "http://140.82.48.134:1234/user";
+            var test = IP_address;
             $.getJSON( test, {
                 num : number,
                 orselect: JSON.stringify(aOrSelect),
@@ -2135,7 +2137,7 @@ function Show_details(uid, select_show_details){
         
         var number = 5;
         (function() {
-            var test = "http://140.82.48.134:1234/user";
+            var test = IP_address;
             $.getJSON( test, {
                 num : number,
                 list: JSON.stringify(show_details_list),

@@ -280,7 +280,7 @@ function draw_up_logo(){
                             var number = 5;
                             (function() {
                                 //var test = "http://98.220.5.15:1234/user";
-                                var test = "http://140.82.48.134:1234/user";
+                                var test = IP_address;
                                 $.getJSON( test, {
                                     num : number,
                                     list: JSON.stringify(Show_Sunbursts_all['up']['paper_list']),
@@ -300,7 +300,7 @@ function draw_up_logo(){
                             if(Object.getOwnPropertyNames(Show_Sunbursts_all).length == 2 && SUNLOCK == 1){
                                 (function() {
                                     //var test = "http://98.220.5.15:1234/user";
-                                    var test = "http://140.82.48.134:1234/user";
+                                    var test = IP_address;
                                     $.getJSON( test, {
                                         num : number,
                                         list: JSON.stringify(Show_Sunbursts_all['down']['paper_list']),
@@ -588,7 +588,7 @@ function draw_up_logo(){
                             var number = 5;
                             (function() {
                                 //var test = "http://98.220.5.15:1234/user";
-                                var test = "http://140.82.48.134:1234/user";
+                                var test = IP_address;
                                 $.getJSON( test, {
                                     num : number,
                                     list: JSON.stringify(Show_Sunbursts_all['up']['paper_list']),
@@ -611,7 +611,7 @@ function draw_up_logo(){
                                 var number = 5;
                                 (function() {
                                     //var test = "http://98.220.5.15:1234/user";
-                                    var test = "http://140.82.48.134:1234/user";
+                                    var test = IP_address;
                                     $.getJSON( test, {
                                         num : number,
                                         list: JSON.stringify(Show_Sunbursts_all['down']['paper_list']),

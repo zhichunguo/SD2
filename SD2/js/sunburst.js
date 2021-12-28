@@ -381,7 +381,7 @@ function drawSun(new_id, new_tree){
                                         var number = 5;
                                         (function() {
                                             //var test = "http://98.220.5.15:1234/user";
-                                            var test = "http://140.82.48.134:1234/user";
+                                            var test = IP_address;
                                             $.getJSON( test, {
                                                 num : number,
                                                 list: JSON.stringify(Show_Sunbursts_all['up']['paper_list']),
@@ -398,7 +398,7 @@ function drawSun(new_id, new_tree){
                                         })();
                                         
                                         (function(){
-                                            var test = "http://140.82.48.134:1234/user";
+                                            var test = IP_address;
                                             $.getJSON( test, {
                                                 num: number,
                                                 list: JSON.stringify(Show_Sunbursts_all['down']['paper_list']),
@@ -474,7 +474,7 @@ function drawSun(new_id, new_tree){
                                             var number = 10;
                                             (function() {
                                                 //var test = "http://98.220.5.15:1234/user";
-                                                var test = "http://140.82.48.134:1234/user";
+                                                var test = IP_address;
                                                 $.getJSON( test, {
                                                     num : number,
                                                     list: JSON.stringify(Show_Sunbursts_all['up']['paper_list']),
@@ -540,7 +540,7 @@ function drawSun(new_id, new_tree){
                                             var number = 5;
                                             (function() {
                                                 //var test = "http://98.220.5.15:1234/user";
-                                                var test = "http://140.82.48.134:1234/user";
+                                                var test = IP_address;
                                                 $.getJSON( test, {
                                                     num : number,
                                                     list: JSON.stringify(Show_Sunbursts_all['up']['paper_list']),
@@ -557,7 +557,7 @@ function drawSun(new_id, new_tree){
                                             })();
                                             
                                             (function(){
-                                                var test = "http://140.82.48.134:1234/user";
+                                                var test = IP_address;
                                                 $.getJSON( test, {
                                                     num: number,
                                                     list: JSON.stringify(Show_Sunbursts_all['down']['paper_list']),
