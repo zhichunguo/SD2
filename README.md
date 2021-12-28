@@ -44,27 +44,27 @@ SD2
 
   |
   
-  myjs.js: Control scholar view, publication view. Also entry for hierarchical histogram view
+  **myjs.js:** Control scholar view, publication view. Also entry for hierarchical histogram view
   
-  sunburst.js: Control hierarchical histogram view 
+  **sunburst.js:** Control hierarchical histogram view 
   
-  sunburst_up.js: Draw upper histogram
+  **sunburst_up.js:** Draw upper histogram
   
-  sunburst_up_second.js: Control attributes to partition the upper paper set 
+  **sunburst_up_second.js:** Control attributes to partition the upper paper set 
   
-  sunburst_down.js: Draw lower histogram
+  **sunburst_down.js:** Draw lower histogram
   
-  sunburst_down_second.js: Control attributes to partition the lower paper set 
+  **sunburst_down_second.js:** Control attributes to partition the lower paper set 
   
-  sunburst_drag_logo.js: Switch attributes position
+  **sunburst_drag_logo.js:** Switch attributes position
   
-  sunburst_group_histogram.js: Control bar grouping
+  **sunburst_group_histogram.js:** Control bar grouping
   
-  add_hints.js: Add hints
+  **add_hints.js:** Add hints
   
-  d3v4.js: d3 library
+  **d3v4.js:** d3 library
   
-  sunburst_drag.js(obsolete): Was used to drag bars in the hierarchical histograms 
+  **sunburst_drag.js(obsolete):** Was used to drag bars in the hierarchical histograms 
 
 ### Steps to run the interface:
 1. Change the 1st line in myjs.js IP_address to your IP address. 
