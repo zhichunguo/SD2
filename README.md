@@ -21,11 +21,45 @@ Install packages which are listed in requirements.txt.
 In the server.py, you should change the line 28-line 31 according to your database settings.
 
 ## Web interface Part
-Interface part are all saved in SD2 folder. Then change all "http://140.82.48.134:1234/user" to your IP address in all .js files. 
 
-``python server.py``
+### Introduction of each file
 
-**Open SD2/scholarlens.html using Chrome.** Then you can use this system.
+SD2
+
+- scholarlens.html / html.css / sunburst.css: Design website layout
+
+- js
+
+  |
+  
+  myjs.js: Control scholar view, publication view. Also entry for hierarchical histogram view
+  
+  sunburst.js: Control hierarchical histogram view 
+  
+  sunburst_up.js: Draw upper histogram
+  
+  sunburst_up_second.js: Control attributes to partition the upper paper set 
+  
+  sunburst_down.js: Draw lower histogram
+  
+  sunburst_down_second.js: Control attributes to partition the lower paper set 
+  
+  sunburst_drag_logo.js: Switch attributes position
+  
+  sunburst_group_histogram.js: Control bar grouping
+  
+  add_hints.js: Add hints
+  
+  d3v4.js: d3 library
+  
+  sunburst_drag.js(obsolete): Was used to drag bars in the hierarchical histograms 
+
+### Steps to run the interface:
+1. Change the 1st line in myjs.js IP_address to your IP address. 
+
+2. ``python server.py``
+
+3. Open SD2/scholarlens.html using **Chrome.** Then you can use this system.
 
 ## Easies way to use web interface
 If you want to explore our visualization part, you can skip dataset download and server part. You can download SD2 folder and open SD2/scholarlens.html using Chrome to use our system. We only upload limited datasets in our server station. You can explore Jiawei Han and Christos's cases in this way.
