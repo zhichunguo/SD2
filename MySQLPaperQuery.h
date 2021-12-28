@@ -1,8 +1,39 @@
 #ifndef MYSQL_PAPER_QUERY_H
 #define MYSQL_PAPER_QUERY_H
 
-// #include "mysql.h"
-#include "typeOperation.h"
+//********************************************************************************
+// file: MySQLPaperQuery
+// 
+// Defines the structures that stores the paper information, venue information,
+// citation relations, and all kinds of modes in the query
+//
+// Defines the MySQLPaperQuery class that received request as a json string, parse
+// the json request, perform the request to query MySQL server. The queried 
+// information will be stored in cache, which can be further exported to a file.
+// This class can restore the cache using a previously saved file as well.
+// In that case, it can be executed on a machine without MySQL server and any data
+// in the database, and simply relies on the previously stored files.
+//********************************************************************************
+
+//define this macro to query from mysql server;
+//otherwise, this header only query from temp files
+//#define USE_MYSQL
+
+//define this macro to produce 
+#define MYSQL_PAPRE_QUERY_DEBUG
+
+//the parameters used to connect to your MySQL server
+//PLEASE UPDATE them with your own information
+#define MySQLServerAddr "localhost"
+#define MySQLUserName "root"
+#define MySQLPassword "password"
+//make sure you create the database before calling functions in this file
+#define MySQLDatabaseName "open_academic_graph" 
+
+#ifdef USE_MYSQL
+#include "mysql.h"
+#endif
+#include "utility.h"
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -16,9 +47,8 @@
 #include <rapidjson/document.h>
 #include <rapidjson/pointer.h>
 
-//#define MYSQL_PAPER_QUERY_PERFORMANCE
-//#define MYSQL_PAPRE_QUERY_DEBUG
 
+//define the positions of each field in the venue info array
 typedef enum {
 	VENUE_INFO_NAME = 0,
 	VENUE_INFO_ABBREV,
@@ -26,6 +56,7 @@ typedef enum {
 	VENUE_INFO_RANK,
 } VenueInfoFieldType;
 
+//define the positions of each field in the paper info array
 typedef enum {
 	PAPER_INFO_TITLE = 0,
 	PAPER_INFO_YEAR,
@@ -37,6 +68,26 @@ typedef enum {
 } PaperInfoFieldType;
 #define CITING_PAPER_INFO_BIT 0x100
 
+//structure for storing the venue info in C++ arrays
+typedef struct {
+	std::string abbrev;
+	std::string rank;
+} VenueInfo;
+
+//structure for storing the paper info in C++ arrays
+typedef struct _PaperInfo {
+	_PaperInfo(const std::string& _id) {
+		id = _id;
+		citation = -1;
+		store_props_mask = 0;
+	}
+	int citation;
+	unsigned char store_props_mask;
+	std::string id;
+	std::string props[6];
+} PaperInfo;
+
+//add quotes for MySQL syntax
 inline std::string composeMySQLList(const std::vector<std::string>& strs) {
 	std::string quote_start("\"");
 	std::string quote_end("\",");
@@ -50,28 +101,17 @@ inline std::string composeMySQLList(const std::vector<std::string>& strs) {
 	return ret;
 }
 
-typedef struct {
-	std::string abbrev;
-	std::string rank;
-} VenueInfo;
-
-typedef struct _PaperInfo {
-	_PaperInfo(const std::string& _id) {
-		id = _id;
-		citation = -1;
-		store_props_mask = 0;
-	}
-	int citation;
-	unsigned char store_props_mask;
-	std::string id;
-	std::string props[6];
-} PaperInfo;
-
 typedef std::map<std::string, int> StringMap;
 
+//manage venue name to the venue information (abbrevation and CCF rank)
 class VenueInfoMap {
 public:
+#ifdef USE_MYSQL
+	VenueInfoMap(MYSQL* conn)
+		:mConn(conn)
+#else
 	VenueInfoMap()
+#endif
 	{
 		mIgnoreWords.insert("is");
 		mIgnoreWords.insert("of");
@@ -86,6 +126,9 @@ public:
 		mKeepWords.insert("ACM");
 	};
 
+	//produce the abbreviation for a single word
+	//return empty string if the word should be ignored
+	//return full string if the word should be kept
 	inline std::string getAbbrevOfWord(const std::string& word) {
 		std::string ret;
 		if (word.empty()) {
@@ -111,6 +154,7 @@ public:
 		return ret;
 	}
 
+	//produce the abbrevation for the venue, if the abbrevation is not found in the database
 	inline std::string genAbbreviation(const std::string& name) {
 		std::stringstream ss(name);
 		std::string word;
@@ -121,31 +165,68 @@ public:
 		return ret;
 	}
 
+	//query the venue information from the database
 	const VenueInfo& getVenueInfo(const std::string& name) {
 		StringMap::iterator it = mNameMap.find(name);
 		if (it != mNameMap.end()) {
 			return mVenues[it->second];
 		}
-		std::cout << "Missing Venue info of name." << std::endl;
+#ifdef USE_MYSQL
+		std::string query = "select `name`, `rank` from venue_info where `venue` =\"" + name + "\";";
+		mysql_query(mConn, query.c_str());
+		MYSQL_RES *res = mysql_store_result(mConn);
+		MYSQL_ROW row;
+		VenueInfo info;
+		if (row = mysql_fetch_row(res)) {
+			info.abbrev = row[0];
+			info.rank = row[1];
+		}
+		if (info.abbrev == "" || info.abbrev == "HTTPS:") {
+			info.abbrev = genAbbreviation(name);
+		}
+		if (info.rank == "") {
+			info.rank = "Other";
+		}
+		info.abbrev += "~" + name;
+		mNameMap[name] = mVenues.size();
+		mVenues.push_back(info);
+		return mVenues[mVenues.size() - 1];
+#else 
+		std::cout << "Missing Venue info of name. Automatically creating one." << std::endl;
 		VenueInfo vinfo;
 		vinfo.abbrev = genAbbreviation(name);
 		vinfo.rank = "";
 		mNameMap[name] = mVenues.size();
 		mVenues.push_back(vinfo);
 		return mVenues[mVenues.size() - 1];
+#endif
 	}
 
 	std::set<std::string> mIgnoreWords;
 	std::set<std::string> mKeepWords;
 	std::vector<VenueInfo> mVenues;
 	StringMap mNameMap;
-	//MYSQL* mConn;
+
+#ifdef USE_MYSQL
+	void setConnection(MYSQL* conn) {
+		mConn = conn;
+	}
+	MYSQL* mConn;
+#endif
 };
 
+//query paper info from MySQL server or from a previously saved temporary file
 class MySQLPaperQuery {
 public:
+#ifdef USE_MYSQL
+	MySQLPaperQuery(MYSQL* conn)
+		:mConn(conn),
+		mVenues(VenueInfoMap(conn)) 
+#else
 	MySQLPaperQuery()
-		:mVenues(VenueInfoMap()) {
+		:mVenues(VenueInfoMap())
+#endif 	
+	{
 		mPapers.reserve(250000);
 
 		mColumnName["Individual Paper"] = "title";
@@ -171,15 +252,31 @@ public:
 		printf("Finish init MySQLPaperQuery.\n");
 	}
 
+	//query MySQL server for paper ids using paper title
 	void getPapersIdByTitle(std::vector<std::string>& ids, const std::vector<std::string>& titles) {
-		std::cout << "papers: " << std::endl;
-		for (int i = 0; i < titles.size(); ++i) {
-			std::cout << titles[i] << std::endl;
+#ifdef USE_MYSQL
+		if (titles.empty()) return;
+
+		std::string query = "select id from paper_info_list_short where title in ";
+		query += composeMySQLList(titles) + ";";
+
+		MYSQL_RES *res;
+		MYSQL_ROW  row;
+
+		ids.reserve(titles.size());
+
+		mysql_query(mConn, query.c_str());
+		res = mysql_store_result(mConn);
+		int num_fields = mysql_num_fields(res);
+		while ((row = mysql_fetch_row(res))) {
+			ids.push_back(row[0]);
 		}
-		std::cout << "NOT FOUND" << std::endl;
-		ids.clear();
+#else
+		std::cout << "Query paper by title is not performed." << std::endl;
+#endif
 	}
 
+	//query from the cached data
 	int getPaperIntId(const std::string& paper_id) {
 		auto it = mPaperIdMap.find(paper_id);
 		if (it != mPaperIdMap.end()) {
@@ -190,11 +287,24 @@ public:
 		return mPapers.size() - 1;
 	}
 
+	//query citation information, query server if the value is not initialized and server exists
+	//otherwise, use cached data
 	void getCitation(PaperInfo& paper, const std::string& value) {
 		paper.citation = atoi(value.c_str());
-		if (paper.citation < 0) {
-			std::cout << "paper " << paper.id << " NOT FOUND" << std::endl;
+#ifdef USE_MYSQL
+		if (paper.citation < 0) { //citation value is not read yet
+			std::string query = "select count(*) from reference_list where reference_id = \"" + paper.id + "\";";
+			mysql_query(mConn, query.c_str());
+			MYSQL_RES *res = mysql_store_result(mConn);
+			MYSQL_ROW row = mysql_fetch_row(res);
+			paper.citation = atoi(row[0]);
+			query = "update paper_info_list_short set citation = \"" + std::string(row[0]);
+			query += " \" where id = \"" + paper.id + "\";";
+			mysql_query(mConn, query.c_str());
 		}
+#else
+		std::cout << "Query citation is not performed." << std::endl;
+#endif
 		if (paper.citation > 50) {
 			paper.props[(int)PAPER_INFO_CITATION] = "High";
 		} else if (paper.citation > 10) {
@@ -204,6 +314,7 @@ public:
 		}
 	}
 
+	//replace double quote from string for MySQL syntax
 	std::string replaceDoubleQuote(const std::string& str) {
 		std::string ret(str);
 		for (int i = 0; i < ret.size(); ++i) {
@@ -214,6 +325,7 @@ public:
 		return ret;
 	}
 
+	//update the cached paper info fields
 	void updatePropertyValue(PaperInfo& paper, const std::string& value, const PaperInfoFieldType& prop) {
 		if (prop == PAPER_INFO_VENUE) {
 			const std::string& abbrev = mVenues.getVenueInfo(value).abbrev;
@@ -244,6 +356,7 @@ public:
 		paper.store_props_mask |= 1 << (int)prop;
 	}
 
+	//generate MySQL paper query statements
 	inline void prepareQueryStatement(std::string& query, std::vector<PaperInfoFieldType>& prop_ids, const std::string& search_by,
 		const std::vector<std::string>& query_props)
 	{
@@ -255,47 +368,123 @@ public:
 		query += " id from paper_info_list_short where " + search_by;
 	}
 
+#ifdef USE_MYSQL
+	inline void updatePaperInfo(const MYSQL_ROW& row, const std::vector<PaperInfoFieldType>& prop_ids) {
+		std::string paper_id_str = row[prop_ids.size()];
+		int paper_id = getPaperIntId(paper_id_str);
+		PaperInfo& paper = mPapers[paper_id];
+
+		for (int i = 0; i < prop_ids.size(); ++i) {//for each property
+			if (row[i] != NULL) {
+				updatePropertyValue(paper, row[i], prop_ids[i]);
+			}
+		}
+	}
+#endif
+
+	//query all fields of paper info from MySQL server
 	void queryPapers(const std::vector<std::string>& papers, const std::string& search_by,
 		const std::vector<std::string>& query_props)
 	{
 		if (papers.empty()) return;
-		//do nothing for this version
+#ifdef USE_MYSQL
+		std::vector<PaperInfoFieldType> prop_ids(query_props.size());
+		std::string query;
+		prepareQueryStatement(query, prop_ids, search_by, query_props);
+		query += " in " + composeMySQLList(papers) + ";";
+
+		MYSQL_RES *res;
+		MYSQL_ROW  row;
+
+		mysql_query(mConn, query.c_str());
+		res = mysql_store_result(mConn);
+		if (res != NULL) {
+			mysql_query(mConn, "START TRANSACTION");//for citation update
+			while ((row = mysql_fetch_row(res))) {//for each row
+				updatePaperInfo(row, prop_ids);
+			}
+			mysql_query(mConn, "COMMIT");
+		}
+#else
 		std::cout << "Query papers not performed." << std::endl;
+#endif
 	}
 
+	//query multiple paper from MySQL server in batches
 	void queryPaperInBatches(const std::vector<std::string>& papers, const std::string& search_by,
 		const std::vector<std::string>& query_props, const int& size)
 	{
-		//do nothing for this version
+#ifdef USE_MYSQL
+		std::vector<std::string> one_batch;
+		for (int i = 0; i < papers.size(); i += size) {
+			int end = i + size;
+			if (end > papers.size()) {
+				end = papers.size();
+			}
+			one_batch.assign(papers.begin() + i, papers.begin() + end);
+			queryPapers(one_batch, search_by, query_props);
+		}
+#else //do nothing
 		std::cout << "Query papers in batches not performed." << std::endl;
+#endif
 	}
 
+	//query multiple paper from MySQL server in smaller size of batches
 	void queryIndividualPapers(const std::vector<std::string>& papers, const std::string& search_by,
-		const std::vector<std::string>& query_props)
+		const std::vector<std::string>& query_props, const int& batch_size=100)
 	{
 		if (papers.empty()) return;
+#ifdef USE_MYSQL
+		int num_col = query_props.size();
+		std::vector<PaperInfoFieldType> prop_ids(query_props.size());
 
-		//do nothing for this version
-		std::cout << "Query papers in batches not performed." << std::endl;
+		std::string query_prefix;
+		prepareQueryStatement(query_prefix, prop_ids, search_by, query_props);
+		query_prefix;
+
+		MYSQL_RES *res;
+		MYSQL_ROW  row;
+
+		mysql_query(mConn, "START TRANSACTION");//for citation update
+		for (int i = 0; i < papers.size(); ++i) {
+			std::string query = query_prefix + " = \"" + papers[i] + "\";";
+			mysql_query(mConn, query.c_str());
+			res = mysql_store_result(mConn);
+			if (res != NULL) {
+				row = mysql_fetch_row(res);
+				if (row != NULL) {
+					updatePaperInfo(row, prop_ids);
+				}
+			}
+			if (i % batch_size == 0) {
+				mysql_query(mConn, "COMMIT");
+				mysql_query(mConn, "START TRANSACTION");
+			}
+		}
+		mysql_query(mConn, "COMMIT");
+#else //do nothing
+		std::cout << "Query individual papers not performed." << std::endl;
+#endif
 	}
 
 	void queryPapersByTitle(const std::vector<std::string>& paper_titles, const std::vector<std::string>& ret_props) {
-		//queryPapers(paper_titles, "title", ret_props);
 		queryIndividualPapers(paper_titles, "title", ret_props);
 	}
 
 	void queryPapersById(const std::vector<std::string>& paper_ids, const std::vector<std::string>& ret_props) {
-		//queryPapers(paper_ids, "id", ret_props);
-		//queryIndividualPapers(paper_ids, "id", ret_props);
 		queryPaperInBatches(paper_ids, "id", ret_props, 100);
 	}
 
+	//defining the query to be performed on publication papers
+	//or citation papers
 	typedef enum {
 		PAPER_PROPERTY = 0,
 		CITING_PROPERTY,
 		PROPERTY_NOT_DEFINED
 	} PROPERTY_TYPE;
 
+	//if the property starts from 'C': citation papers
+	//else if starts from 'P': publication papers
 	inline PROPERTY_TYPE getPropertyType(const std::string& p) {
 		if (p[0] == 'C' && p[1] == '.') {
 			return CITING_PROPERTY;
@@ -305,19 +494,25 @@ public:
 		return PROPERTY_NOT_DEFINED;
 	}
 
+	//test the citation bit to see whether the property is 
+	//a citation property or a publication property
 	inline bool isCitingProperty(const int& prop) {
 		return (prop&CITING_PAPER_INFO_BIT);
 	}
 
+	//stores the ids of the citing paper and cited paper
+	//the id is a number in the cache
 	typedef struct {
 		int cited_paper;
 		int citing_paper;
 	} CitingRelation;
 
+	//create a citing relation
 	inline CitingRelation makeCitingRelation(const int& cited, const int& citing) {
 		CitingRelation ret = { cited, citing };
 		return ret;
 	}
+
 
 	void updateCitingRelationsIndividual(std::vector<std::string>& citing, std::vector<CitingRelation>& citing_relations, const std::vector<std::string>& cited) {
 		if (cited.empty()) return;
@@ -325,6 +520,8 @@ public:
 		for (int i = 0; i < cited.size(); ++i) {
 			getPaperIntId(cited[i]);
 		}
+
+		std::string query_prefix = "select cite_id, reference_id from reference_list where reference_id = \"";
 
 		std::set<int> citing_ids;
 		for (int i = 0; i < cited.size(); ++i) {
@@ -337,8 +534,23 @@ public:
 					citing_ids.insert(citing_ids.end(), citations[j]);
 				}
 			} else {
-				//do nothing for this version
+#ifdef USE_MYSQL
+				std::string query = query_prefix + cited[i] + "\";";
+				mysql_query(mConn, query.c_str());
+				MYSQL_RES *res = mysql_store_result(mConn);
+				std::vector<int>& citations = mCitations[cited_i];
+				if (res != NULL) {
+					MYSQL_ROW  row;
+					while ((row = mysql_fetch_row(res))) {
+						int citing_id = getPaperIntId(row[0]);
+						citing_relations.push_back(makeCitingRelation(cited_i, citing_id));
+						citing_ids.insert(citing_ids.end(), citing_id);
+						citations.push_back(citing_id);
+					}
+				}
+#else //do nothing
 				std::cout << "Citation data not found." << std::endl;
+#endif
 			}
 		}
 
@@ -348,6 +560,7 @@ public:
 		}
 	}
 
+	//query citation relations from mysql server and update the cache
 	void updateCitingRelations(std::vector<std::string>& citing, std::vector<CitingRelation>& citing_relations, const std::vector<std::string>& cited) {
 		if (cited.empty()) return;
 
@@ -355,10 +568,32 @@ public:
 			getPaperIntId(cited[i]);
 		}
 
+#ifdef USE_MYSQL
 		std::string query = "select cite_id, reference_id from reference_list where reference_id in ";
-		std::cout << "Query " << query << " is NOT PERFORMED." << std::endl;
+		query += composeMySQLList(cited) + ";";
+
+		mysql_query(mConn, query.c_str());
+		MYSQL_RES *res = mysql_store_result(mConn);
+		MYSQL_ROW  row;
+
+		std::set<int> citing_ids;
+		int num_fields = mysql_num_fields(res);
+		while ((row = mysql_fetch_row(res))) {
+			int citing_id = getPaperIntId(row[0]);
+			citing_relations.push_back(makeCitingRelation(getPaperIntId(row[1]), citing_id));
+			citing_ids.insert(citing_ids.end(), citing_id);
+		}
+
+		citing.reserve(citing_ids.size());
+		for (auto it = citing_ids.begin(); it != citing_ids.end(); ++it) {
+			citing.push_back(mPapers[*it].id);
+		}
+#else //do nothing
+		std::cout << "Query relation is not performed." << std::endl;
+#endif
 	}
 
+	//retrieve citing or cited paper property according to the property id
 	const std::string& getPropertyValue(const CitingRelation& rel, const int& prop_id, const std::map<std::string, std::string>& prop_group) {
 		const std::string& val = (isCitingProperty(prop_id)) ?
 			mPapers[rel.citing_paper].props[prop_id - CITING_PAPER_INFO_BIT] : mPapers[rel.cited_paper].props[prop_id];
@@ -373,6 +608,7 @@ public:
 		return val;
 	}
 
+	//group information of a set of papers
 	typedef struct _GroupInfo {
 		_GroupInfo() {
 			agg_val = 0;
@@ -381,12 +617,13 @@ public:
 		std::vector<int> citations;
 	} GroupInfo;
 
-
+	//histogram bin with a name and a number
 	typedef struct {
 		std::string name;
 		int num;
 	} SortHistogramType;
 
+	//sort histogram bins by numbers
 	static bool compareHistogramBinByNum(const SortHistogramType& a, const SortHistogramType& b) {
 		if (a.num == b.num) {
 			return (a.name > b.name);
@@ -394,6 +631,7 @@ public:
 		return (a.num > b.num);
 	}
 
+	//sort histogram bins by names
 	static bool compareHistogramBinByName(const SortHistogramType& a, const SortHistogramType& b) {
 		if (a.name == b.name) {
 			return (a.num < b.num);
@@ -401,6 +639,8 @@ public:
 		return (a.name < b.name);
 	}
 
+	//aggregation mode return number of papers, citations,
+	//h-index of publication sets, or h-index of citation set
 	typedef enum {
 		AGG_COUNT_RELATION = 0,
 		AGG_COUNT_PAPER_CITATION,
@@ -408,11 +648,14 @@ public:
 		AGG_CITING_HINDEX
 	} AggregationMode;
 
+	//return results by hierarchy or by sorted histogram bins
 	typedef enum {
 		PRODUCT_HIERARCHIES = 0,
 		PRODUCT_RANKED_HISTOGRAM
 	} ProductMode;
 
+	//if the properties used for partition contains any citation properties
+	//use citation paper set; otherwise, use agg_prop string to determine the mode 
 	AggregationMode getAggregationMode(const bool& has_citing_prop, const std::string& agg_prop) {
 		if (agg_prop == "H-index") {
 			if (has_citing_prop) {
@@ -426,6 +669,7 @@ public:
 		return AGG_COUNT_RELATION;
 	}
 
+	//parse product mode
 	inline ProductMode getProductMode(const std::string& product_mode) {
 		if (product_mode == "ranked histogram") {
 			return PRODUCT_RANKED_HISTOGRAM;
@@ -433,6 +677,7 @@ public:
 		return PRODUCT_HIERARCHIES;
 	}
 
+	//return information of a paper set based on the aggregation mdoe
 	inline void updateGroupInfo(GroupInfo& ginfo, const CitingRelation& rel, const AggregationMode& mode) {
 		if (mode == AGG_COUNT_RELATION) {
 			++ginfo.agg_val;
@@ -445,6 +690,7 @@ public:
 		}
 	}
 
+	//compute h-index or an array
 	int computeHIndex(std::vector<int>& arr) {//COULD BE IMPROVED USING PARTITION
 		std::sort(arr.begin(), arr.end(), std::greater<int>());
 		int ret = 0;
@@ -456,12 +702,14 @@ public:
 		return ret;
 	}
 
+	//get the name of the next group (paper set)
 	inline std::string getNextName(int& offset, const std::string& group_name) {
 		int prev_cap = offset;
 		offset = group_name.find('\n', prev_cap + 1);
 		return fixNameForDisplay(group_name.substr(prev_cap + 1, offset - prev_cap - 1));
 	}
 
+	//remove the special encoding for display
 	inline std::string fixNameForDisplay(const std::string& name) {
 		if (!name.empty() && name[0] == '|') {
 			return name.substr(1, name.length() - 1);
@@ -469,6 +717,7 @@ public:
 		return name;
 	}
 
+	//special encoding to guarantee the display order during sorting
 	inline void reencode(std::string& prop_value) {
 		if (prop_value == "Low") {
 			prop_value.insert(prop_value.begin(), '|');
@@ -477,6 +726,7 @@ public:
 		}
 	}
 
+	//special encoding to guarantee the display order during sorting
 	inline void reencode(PaperInfo& pinfo) {
 		if (pinfo.props[PAPER_INFO_CITATION] == "Low") {
 			pinfo.props[PAPER_INFO_CITATION] = "|Low";
@@ -492,6 +742,7 @@ public:
 		}
 	}
 
+	//convert the information of a paper set to json format
 	std::string groupsToString(const std::vector<SortHistogramType>& groups, const int& num_lev) {
 		std::string ret = "{\"name\":\"flare\", \"children\": [";
 		std::vector<std::string> current_prefix;
@@ -528,6 +779,7 @@ public:
 		return ret;
 	}
 
+	//convert the groups to a ranked histogram
 	std::string groupsToRankedHistogram(std::vector<SortHistogramType>& groups, const std::vector<int>& prop_ids) {
 		std::string ret;
 		if (prop_ids.size() != 1) {
@@ -570,6 +822,7 @@ public:
 		return ret;
 	}
 
+	//sort the groups by their names
 	void sortGroupsByName(std::vector<SortHistogramType>& sroted_groups, const std::map<std::string, GroupInfo>& groups) {
 		sroted_groups.reserve(groups.size());
 		for (auto it = groups.begin(); it != groups.end(); ++it) {
@@ -581,6 +834,8 @@ public:
 		std::sort(sroted_groups.begin(), sroted_groups.end(), compareHistogramBinByName);
 	}
 
+	//generate the return information for request concerning property groups 
+	//results are stored in the mOutput member variable to avoid garbage collection
 	std::string produceGroups(const std::vector<CitingRelation>& citing_relations, const std::vector<int>& prop_ids,
 		const std::vector<std::map<std::string, std::string>>& prop_groups, AggregationMode& agg_mode, const ProductMode& product_mode)
 	{
@@ -619,16 +874,19 @@ public:
 		return mOutput;
 	}
 
+	//clear paper information
 	void clearData() {
 		mPapers.clear();
 		mPaperIdMap.clear();
 	}
 
+	//determine whether there is any missing information that requires queries to mysql server
 	inline bool needQuery(const std::string& paper_id, const unsigned char& query_mask) {
 		unsigned char paper_props_mask = mPapers[getPaperIntId(paper_id)].store_props_mask;
 		return (((paper_props_mask^query_mask)&query_mask) != 0);
 	}
 
+	//return the papers where information is missing, which requires queries to mysql server
 	void getPapersNeedQuery(std::vector<std::string>& papers_need_query, const std::vector<std::string>& papers,
 		const unsigned char& query_mask)
 	{
@@ -645,6 +903,7 @@ public:
 		}
 	}
 
+	//read information from a temporay file
 	bool readFile(const char* file_path) {
 		mVenues.mNameMap.clear();
 		mVenues.mVenues.clear();
@@ -725,6 +984,7 @@ public:
 		return true;
 	}
 
+	//write the cached information to a temporary file
 	bool writeFile(const char* file_path) {
 		std::ofstream file;
 		if (!open_file(file, file_path)) {
@@ -767,6 +1027,8 @@ public:
 		return true;
 	}
 
+	//process the request for given papers, query properties, property grouping, aggregation mode, and product mode
+	//result is store in mOutput member variable
 	void processRequest(const std::vector<std::string>& papers, const std::vector<std::string>& query_props,
 		const std::vector<std::map<std::string, std::string>>& prop_groups, const std::string& agg_prop, const std::string& product_mode)
 	{
@@ -833,7 +1095,15 @@ public:
 		mPreviousRequestPropIds = prop_ids;
 	}
 
+	//parse the request string and produce parameters for the other processRequest function
 	void processRequest(const std::string request_str) {
+#ifdef MYSQL_PAPRE_QUERY_DEBUG
+		std::ofstream request_file;
+		open_file(request_file, "last_request.txt");
+		request_file << request_str;
+		request_file.close();
+#endif //MYSQL_PAPRE_QUERY_DEBUG
+
 		rapidjson::Document request;
 		request.Parse(request_str.c_str());
 
@@ -902,10 +1172,17 @@ public:
 		} else {
 			product_mode = "hierarchies";
 		}
-
 		processRequest(paper_ids, query_props, prop_groups, agg_prop, product_mode);
+
+#ifdef MYSQL_PAPRE_QUERY_DEBUG
+		std::ofstream output_file;
+		open_file(output_file, "output.txt");
+		output_file << mOutput;
+		output_file.close();
+#endif //MYSQL_PAPRE_QUERY_DEBUG
 	}
 
+	//producing missing bins for the other hierarchical histogram
 	void augmentGroups(const std::map<std::string, GroupInfo>& g1, std::map<std::string, GroupInfo>& g2) {
 		for (auto it = g1.begin(); it != g1.end(); ++it) {
 			if (g2.find(it->first) == g2.end()) {
@@ -916,6 +1193,7 @@ public:
 		}
 	}
 
+	//produce results for two request and align the results
 	void processRequestAligned(const std::string request1, const std::string request2) {
 		processRequest(request1);
 		std::map<std::string, GroupInfo> g1 = mGroups;
@@ -937,6 +1215,7 @@ public:
 		mOutput += "}";
 	}
 
+	//copy the output to desired memory locations
 	void produceOutput(char* output) {
 		memcpy(output, mOutput.c_str(), mOutput.length());
 		output[mOutput.length()] = '\0';
@@ -949,11 +1228,45 @@ public:
 	std::map<std::string, PaperInfoFieldType> mPropertyInfoId;
 	StringMap mPaperIdMap;
 	std::vector<PaperInfo> mPapers;
+
 	VenueInfoMap mVenues;
 	//for request results
 	std::vector<int> mPreviousRequestPropIds;
 	std::string mOutput;
 	std::map<std::string, GroupInfo> mGroups;
+
+#ifdef USE_MYSQL
+	void setConnection(MYSQL* conn) {
+		mConn = conn;
+		mVenues.setConnection(conn);
+	}
+	MYSQL* mConn;
+#endif
 };
+
+//a utility function to connect to the mysql server
+#ifdef USE_MYSQL
+inline bool connectMySQL(MYSQL& conn) {
+	if (0 == mysql_library_init(0, NULL, NULL)) {
+		std::cout << "mysql_library_init() succeed" << std::endl;
+	} else {
+		std::cout << "mysql_library_init() failed" << std::endl;
+		return false;
+	}
+	if (NULL != mysql_init(&conn)) {
+		std::cout << "mysql_init(mydata) succeed" << std::endl;
+	} else {
+		std::cout << "mysql_init(mydata) failed" << std::endl;
+		return false;
+	}
+	if (NULL != mysql_real_connect(&conn, MySQLServerAddr, MySQLUserName, MySQLPassword, MySQLDatabaseName, 0, NULL, 0)) {
+		std::cout << "mysql_real_connect() succeed" << std::endl;
+	} else {
+		std::cout << "mysql_real_connect() failed" << std::endl;
+		return false;
+	}
+	return true;
+}
+#endif
 
 #endif //MYSQL_PAPER_QUERY_H
