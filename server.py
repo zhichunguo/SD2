@@ -16,6 +16,19 @@ reload(sys)
 
 import scholarlens_python
 
+
+# //********************************************************************************
+# // file: server.py
+# // 
+# // This file is to prepare the datasets according to the queries.
+# // 1. Crawl the authors' information, publication and their co-authors' information and publications from their google scholar pages.
+# // 2. Update databases and save authors' infromation into the local folder to accelerate the query speed.
+# // 3. Prepare the data according to different queries, like grouping the paper sets.
+# //********************************************************************************
+
+
+
+
 app = Flask(__name__)
 CORS(app)
 
@@ -36,6 +49,9 @@ def removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
 def removeNumber(s): return "".join(i for i in s if (i<'0' or i>'9'))
 
 
+# //********************************************************************************
+# // 1. Crawl the authors' information, publication and their co-authors' information and publications from their google scholar pages.
+# //********************************************************************************
 
 def headers(tree, result):   #### Crawler head
     headers = tree.xpath(r'//div[@id = "gsc_prf_i"]')[0]
@@ -126,6 +142,11 @@ def co_authers(urlname, result):    ### Check co-authors information on the auth
         author['co_paper_num'] = co_authors_info['co_paper_sum']
         print(author)
         result['co_authors'].append(author)
+
+# //********************************************************************************
+# // 2. Update databases and save authors' infromation into the local folder to accelerate the query speed.
+# //********************************************************************************
+
 
 def papers(urlname, tree, result):   ### Check paper information. If this author's papers information have been saved in co_authors_list, just read it. Or craw the papers titles using google scholar and then check them in the database. 
     result['papers'] = {}
@@ -468,6 +489,11 @@ def check(id, name):  ### check if this author's information has been saved or n
                 res['sum'] = ''
                 res['co_authors'] = ''
                 return jsonify(res)
+
+
+# //********************************************************************************
+# // 3. Prepare the data according to different queries, like grouping the paper sets.
+# //********************************************************************************
 
 def show_histogram(orselect_list, select_list, unselect_list, v_select_list, v_unselect_list):   ### Identify set operations and organize the paper set to scholar view
 
@@ -1516,9 +1542,14 @@ def check_coauthor(id, urlname, name):    ### check clicked coauthor
         return check(id, urlname)
 
 
+# //********************************************************************************
+
+# // Receive queries and utilize different functions to prepare data.
+
+# //********************************************************************************
 
 @app.route('/user')
-def user():
+def user():    
     print(request)
     id = request.args.get('num', default = 1, type = int)
     if id == 0 or id == 1:   ### add author to explore
