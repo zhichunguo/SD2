@@ -23,15 +23,15 @@ Install packages which are listed in requirements.txt.
 
 In the server.py, you should change the line 28-line 31 according to your database settings.
 
-#### scholarlens_python Library
-The scholarlens_python library is a python library written in C++ to speedup the queries to the MySQL database. The library will cache all queried information in RAM to avoid repeated queries to the MySQL server. It can also write the cached information to an external file, and restore information from the file.
-**Database setting**: You need to define the database information, such as the MySQL server address, user name, user password, and database name, at the beginning of the *MySQLPaperQuery.h*. 
+#### scholarlens_python Library. 
+The scholarlens_python library is a python library written in C++ to speedup the queries to the MySQL database. The library will cache all queried information in RAM to avoid repeated queries to the MySQL server. It can also write the cached information to an external file, and restore information from the file.  
+**Database setting**: You need to define the database information, such as the MySQL server address, user name, user password, and database name, at the beginning of the *MySQLPaperQuery.h*.  
 **Options**: The library can be compiled with two options by defining MACROS ``USE_MYSQL`` and ``MYSQL_PAPRE_QUERY_DEBUG``.
-``USE_MYSQL``: Compile the library with the ability to query MySQL server. If this macro is not defined, the library can still run with information provided in previously saved external files. In that case, the server will not require the MySQL server and the database to run.
-``MYSQL_PAPRE_QUERY_DEBUG``: Compile the library with the ability to produce log files for debugging. 
-**Reading/writing external files**: You may send a request to read or write a file through the Flask server. The Flask server will then send the request to the library. To write the cached information to a file, you need to run ``host_address:1234/writefile?name=file.txt``, where ``host_address`` is the IP address of the host and ``file.txt`` is the name of the file. To read information from a file to cache, you may run ``host_address:1234/readfile?name=file.txt``.
-**Compilation**: The scholarlens_python library can be compiled using the *CMakeList.txt* file. For **Linux/MacOS**, you may simply run ``cmake ./`` to produce a Makefile, and run ``make`` to compile. For **Windows**, you may use cmake to produce a visual studio project for compilation.
-**Dependencies**: The library requires Python and Boost to export the C++ library to Python. It also requires the MySQL C++ connector lirary if compiled with the ``USE_MYSQL`` compilation option.
+``USE_MYSQL``: Compile the library with the ability to query MySQL server. If this macro is not defined, the library can still run with information provided in previously saved external files. In that case, the server will not require the MySQL server and the database to run.  
+``MYSQL_PAPRE_QUERY_DEBUG``: Compile the library with the ability to produce log files for debugging.   
+**Reading/writing external files**: You may send a request to read or write a file through the Flask server. The Flask server will then send the request to the library. To write the cached information to a file, you need to run ``host_address:1234/writefile?name=file.txt``, where ``host_address`` is the IP address of the host and ``file.txt`` is the name of the file. To read information from a file to cache, you may run ``host_address:1234/readfile?name=file.txt``.  
+**Compilation**: The scholarlens_python library can be compiled using the *CMakeList.txt* file. For **Linux/MacOS**, you may simply run ``cmake ./`` to produce a Makefile, and run ``make`` to compile. For **Windows**, you may use cmake to produce a visual studio project for compilation.  
+**Dependencies**: The library requires Python and Boost to export the C++ library to Python. It also requires the MySQL C++ connector lirary if compiled with the ``USE_MYSQL`` compilation option.  
 
 ## Web interface
 ### Introduction of each file
