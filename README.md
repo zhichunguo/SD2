@@ -17,7 +17,7 @@ Then when you check different venues, the venues' information will be automatica
 
 ## Server
 #### Mainfile: server.py
-The server is a Flask server written in python. It listens to the port 1234 for requests and processes the requests by crawling online information and querying MySQL database.
+The server is a Flask server written in python. It listens to the port 1234 for requests and processes the requests by crawling online information and querying MySQL database. 
 
 Install packages which are listed in requirements.txt.  
 ``pip install -r requirements.txt``
