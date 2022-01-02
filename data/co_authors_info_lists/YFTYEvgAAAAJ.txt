@@ -1,0 +1,1 @@
+{"titles": ["Distortion-free watermarking scheme for wireless sensor networks", "Toward forming an effective team using social network", "Semi-fragile watermark for sensor data"], "ids": ["9c7b276c-356f-479e-9b9b-4f552c25d86e", "074b3d52-5583-4374-98d4-a3b1b916f249", "2d5a4a95-3f64-4e32-a750-d0d435b02204"]}

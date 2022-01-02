@@ -1,0 +1,1 @@
+{"titles": ["SampleRNN: An Unconditional End-to-End Neural Audio Generation Model", "Char2Wav: End-to-end speech synthesis", "PixelVAE: A Latent Variable Model for Natural Images", "ObamaNet: Photo-realistic lip-sync from text", "On random weights for texture generation in one layer CNNS"], "ids": ["db756e27-3e10-4930-ba6a-bd8c952f8668", "644bb6c6-dcd7-4747-8756-05be0623d223"]}

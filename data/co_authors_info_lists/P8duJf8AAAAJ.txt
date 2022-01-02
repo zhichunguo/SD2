@@ -1,0 +1,1 @@
+{"titles": ["Topology Exploration with Hierarchical Landscapes", "ManyVis: Multiple applications in an integrated visualization environment", "Hysteresis analysis of lung tumor motion in radiation treatment"], "ids": ["e61e4c6b-c34e-46ae-8412-948c4f67649b", "aabe6dd4-8132-4003-bb8c-7e9e1b801337", "3157be62-c43d-4258-bb41-0fe486623ee7"]}

@@ -1,0 +1,1 @@
+{"titles": ["VAFLE: Visual analytics of firewall log events", "Data abstraction for visualizing large time series", "Visual analytics for network security", "2012 IEEE Conference on Visual Analytics Science and Technology (VAST)(2012)"], "ids": ["6aaa5c86-df10-4d10-ae12-ac5c4d4dc875", "c0f9e552-524c-4c3e-a18d-34f79cceb35d"]}

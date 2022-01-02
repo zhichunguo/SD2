@@ -1,0 +1,1 @@
+{"titles": ["Lightnet: A versatile, standalone matlab-based environment for deep learning", "A dataset and baselines for sequential open-domain question answering", "Atom decomposition with adaptive basis selection strategy for matrix completion"], "ids": ["cc6f9c01-1cad-4f47-ad48-9fc7dc48d3d9", "a6c0177c-0fe9-4729-9815-52c75256529a"]}

@@ -1,0 +1,1 @@
+{"titles": ["Predicting surgery duration with neural heteroscedastic regression", "Predicting embryo morphokinetic annotations from time-lapse videos using convolutional neural networks", "Predicting Embryo Morphokinetics in Videos with Late Fusion Nets & Dynamic Decoders"], "ids": ["628dcbed-178f-449e-9777-ae9b1ed3747c"]}

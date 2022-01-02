@@ -1,0 +1,1 @@
+{"titles": ["Detecting silicone mask-based presentation attack via deep dictionary learning", "Template aging in 3D and 2D face recognition", "Upper Body Poses and Gestures in Classroom Speaker Videos"], "ids": ["58b99418-422b-401d-a300-305ed334703f", "a82ba124-e87d-4745-8002-a8b0a6b6181b"]}

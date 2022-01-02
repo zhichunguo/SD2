@@ -1,0 +1,1 @@
+{"titles": ["ThunderSVM: A fast SVM library on GPUs and CPUs", "Efficient gradient boosted decision tree training on GPUs", "Exploiting GPUs for efficient gradient boosting decision tree training", "ThunderGBM: Fast GBDTs and random forests on GPUs", "Efficient multi-class probabilistic SVMs on GPUs", "Efficient Support Vector Machine Training Algorithm on GPUs"], "ids": []}

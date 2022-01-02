@@ -1,0 +1,1 @@
+{"titles": ["Visual-interactive semi-supervised labeling of human motion capture data", "Visual-Interactive Segmentation of Multivariate Time Series.", "Combining cluster and outlier analysis with visual analytics", "Design of a BCI Controlled Serious Game for Concentration Training"], "ids": ["bcda753e-d8a1-492d-aee8-a39718f64798"]}

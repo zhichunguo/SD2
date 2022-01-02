@@ -1,0 +1,1 @@
+{"titles": ["Student attendance system in crowded classrooms using a smartphone camera", "Face recognition in low-quality images using adaptive sparse representations", "Identity document to selfie face matching across adolescence"], "ids": []}

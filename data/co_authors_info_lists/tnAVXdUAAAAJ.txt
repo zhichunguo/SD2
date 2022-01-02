@@ -1,0 +1,1 @@
+{"titles": ["A Vision of Bringing Immersive Visualization to Scientific Workflows", "Augmenting Tactile 3D Data Navigation With Pressure Sensing", "Augmenting Tactile 3D Data Exploration With Pressure Sensing", "Towards an Understanding of Augmented Reality Extensions for Existing 3D Data Analysis Tools"], "ids": []}

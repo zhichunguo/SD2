@@ -1,0 +1,1 @@
+{"titles": ["POETIC: Interactive solutions to alleviate the reversal error in student\u2013professor type problems", "Intelligent Camera Control in Game Replays", "POETIC: ADDRESSING THE REVERSAL ERROR WITH AN INTERACTIVE WEB-BASED SOLUTION"], "ids": ["705ad1fb-0ae7-48c5-8a8a-a27e61b7daf7"]}

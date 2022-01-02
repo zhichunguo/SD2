@@ -1,0 +1,1 @@
+{"titles": ["Integrating touch and near touch interactions for information visualizations", "Near touch interactions: understanding grab and release actions."], "ids": ["408506cd-7374-450a-b65f-012401a6280f"]}

@@ -1,0 +1,1 @@
+{"titles": ["Template aging in 3D and 2D face recognition", "GPU based Parallel Image Processing Library for Embedded Systems"], "ids": ["a82ba124-e87d-4745-8002-a8b0a6b6181b", "d4a15d94-badf-4939-8f38-696366b539f3"]}

@@ -1,0 +1,1 @@
+{"titles": ["Structural signatures of thermal adaptation of bacterial ribosomal RNA, transfer RNA, and messenger RNA"], "ids": []}

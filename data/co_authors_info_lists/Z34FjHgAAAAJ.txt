@@ -1,0 +1,1 @@
+{"titles": ["Efficient Decentralized Deep Learning by Dynamic Model Averaging", "Making Efficient Use of a Domain Expert's Time in Relation Extraction", "Introducing Noise in Decentralized Training of Neural Networks", "Designing Visualisation Enhancements for SIEM Systems"], "ids": []}

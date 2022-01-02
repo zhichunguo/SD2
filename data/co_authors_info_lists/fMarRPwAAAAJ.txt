@@ -1,0 +1,1 @@
+{"titles": ["A comprehensive study of real-world numerical bug characteristics", "Exploiting Community Structure for Floating-Point Precision Tuning", "EATBit: Effective automated test for binary translation with high code coverage"], "ids": ["34627f93-170c-4484-b58c-75b583edd977"]}

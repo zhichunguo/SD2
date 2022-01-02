@@ -1,0 +1,1 @@
+{"titles": ["Preserving location privacy in geosocial applications", "Privacy, availability and economics in the polaris mobile social network", "Mobile Device Theft Recovery Application"], "ids": ["214d0021-cc12-43a8-ad37-23b2137d3a83", "7650b283-69e9-4cef-891c-2635bfa46a38"]}
