@@ -6,7 +6,7 @@ This repository contains the code package for the paper "SD2: Slicing and Dicing
 You need to perform the following steps to use the tool:  
 1. Install the required packages and run the **flask server**.  
 2. Compile the **SD2Query** library and make it discoverable by the flask server.  
-3. Open the **web interface** (SD2/scholarlens.html).  
+3. Open the **web interface** (interface/scholarlens.html).  
 4. **(Option 1)** Use cached external data file (e.g., data/christosjiawei.txt) for queries.  
 5. **(Option 2)** Download MAG data and build the **MySQL database** for queries from SD2Query.  
 
@@ -15,9 +15,7 @@ The detailed instructions are stated in the following sections.
 ## Flask Server
 The server is a Flask server written in python. It listens to the port 1234 for requests and processes the requests by crawling online information and querying MySQL database.
 
-Install packages which are listed in requirements.txt. 
-
-In the server.py, you should change the line 28-line 31 according to your database settings.
+To run this server, you need to install packages which are listed in requirements.txt by ``pip install -r requirements.txt``. This server needs to connect to the MySQL database to query the papers information from it. So you also need to should change MySQL database information in ``connectMYSQL`` function (line 38-41) of server.py to your database settings. Then do ``python server.py`` to build up the Flask server which listens to the port 1234.
 
 ## SD2Query Library
 The SD2Query library is a python library written in C++ to speedup the queries to the MySQL database. The library will cache all queried information in RAM to avoid repeated queries to the MySQL server. It can also write the cached information to an external file, and restore information from the file.
@@ -34,15 +32,11 @@ The SD2Query library is a python library written in C++ to speedup the queries t
 
 **Compilation**: The SD2Query library can be compiled using the *CMakeList.txt* file. For *Linux/MacOS*, you may simply run ``cmake ./`` to produce a Makefile, and run ``make`` to compile. For *Windows*, you may use cmake to produce a visual studio project for compilation. A successful compilation will create a dynamic library, and you need to copy that to the directory containing server.py to ensure the library is discoverable by python.
 
-**Dependencies**: The library requires Python and Boost to export the C++ library to Python. It also requires the MySQL C++ connector lirary if compiled with the ``USE_MYSQL`` compilation option.  
+**Dependencies**: The library requires Python and Boost to export the C++ library to Python. It also requires the MySQL C++ connector library if compiled with the ``USE_MYSQL`` compilation option.  
 
 ## Web interface
-### Introduction of each file
-
-SD2
-
-- scholarlens.html / html.css / sunburst.css: Design website layout
-
+**Introduction of the interface files**:  
+- scholarlens.html / html.css / sunburst.css: Design website layout  
 - js
 
   |
