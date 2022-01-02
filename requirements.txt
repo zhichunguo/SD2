@@ -1,7 +1,0 @@
-requests
-re
-flask
-lxml
-pymysql
-sys
-imp
