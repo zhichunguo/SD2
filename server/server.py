@@ -146,8 +146,8 @@ def papers(urlname, tree, result):   ### Check paper information. If this author
     result['papers'] = {}
     db, cur = connectMYSQL('open_academic_graph')
 
-    if os.path.exists("./co_authors_info_lists/" + urlname + ".txt"):
-        file = open("./co_authors_info_lists/" + urlname + ".txt", 'r')
+    if os.path.exists("../data/co_authors_info_lists/" + urlname + ".txt"):
+        file = open("../data/co_authors_info_lists/" + urlname + ".txt", 'r')
         co_author_papers = json.loads(file.read())
         file.close()
 
@@ -257,7 +257,7 @@ def papers(urlname, tree, result):   ### Check paper information. If this author
                 except Exception as e:
                     continue
         
-        file = open("./co_authors_info_lists/" + urlname + ".txt", 'w')
+        file = open("../data/co_authors_info_lists/" + urlname + ".txt", 'w')
         file.write(json.dumps(co_authors_papers))
         file.close()
 
@@ -322,7 +322,7 @@ def co_papers(urlname, tree, result, author_result):  ### Check the author's co-
             except Exception as e:
                 continue
     
-    file = open("./co_authors_info_lists/" + urlname + ".txt", 'w')
+    file = open("../data/co_authors_info_lists/" + urlname + ".txt", 'w')
     file.write(json.dumps(co_authors_papers))
     file.close()
 
@@ -331,8 +331,8 @@ def co_papers(urlname, tree, result, author_result):  ### Check the author's co-
 
 def login_coauthor(urlname,author_result): ###  Check co-authors information on the co-author's google scholar page
     result = {}
-    if os.path.exists("./co_authors_info_lists/" + urlname + ".txt"):
-        file = open("./co_authors_info_lists/" + urlname + ".txt", 'r')
+    if os.path.exists("../data/co_authors_info_lists/" + urlname + ".txt"):
+        file = open("../data/co_authors_info_lists/" + urlname + ".txt", 'r')
         co_author_papers = json.loads(file.read())
         file.close()
 
@@ -366,8 +366,8 @@ def login_coauthor(urlname,author_result): ###  Check co-authors information on 
 def dtails(urlname, tree):   ### explore more information of the author 
     result = {}
     headers(tree, result)
-    if os.path.exists("./authors_info_lists/" + result['name'] + ".txt"):
-        file = open("./authors_info_lists/" + result['name'] + ".txt", 'r')
+    if os.path.exists("../data/authors_info_lists/" + result['name'] + ".txt"):
+        file = open("../data/authors_info_lists/" + result['name'] + ".txt", 'r')
         author_info = json.loads(file.read())
         file.close()
         return author_info
@@ -376,7 +376,7 @@ def dtails(urlname, tree):   ### explore more information of the author
     papers(urlname, tree, result)
     co_authers(urlname, result)
 
-    file = open("./authors_info_lists/" + result['name'] + ".txt", 'w')
+    file = open("../data/authors_info_lists/" + result['name'] + ".txt", 'w')
     file.write(json.dumps(result))
     file.close()
 
@@ -423,8 +423,8 @@ def check(id, name):  ### check if this author's information has been saved or n
         print(res)
         return jsonify(res)
     else:
-        if os.path.exists("./authors_info_lists/" + name + ".txt"):
-            file = open("./authors_info_lists/" + name + ".txt", 'r')
+        if os.path.exists("../data/authors_info_lists/" + name + ".txt"):
+            file = open("../data/authors_info_lists/" + name + ".txt", 'r')
             author_info = json.loads(file.read())
             file.close()
             res = {}
@@ -503,7 +503,7 @@ def show_histogram(orselect_list, select_list, unselect_list, v_select_list, v_u
         all_info = {}
         papers = {}
         for i in range(len(orselect_list)):
-            file = open('./authors_info_lists/' + orselect_list[i] + '.txt', 'r')
+            file = open('../data/authors_info_lists/' + orselect_list[i] + '.txt', 'r')
             r = json.loads(file.read())
             file.close()
             for paper in r['papers']:
@@ -511,13 +511,13 @@ def show_histogram(orselect_list, select_list, unselect_list, v_select_list, v_u
                     papers[paper] = r['papers'][paper]
         
         for i in range(len(select_list)):
-            file = open('./authors_info_lists/' + select_list[i] + '.txt', 'r')
+            file = open('../data/authors_info_lists/' + select_list[i] + '.txt', 'r')
             r = json.loads(file.read())
             file.close()
             if r['name'] not in all_info:
                 all_info[r['name']] = r['papers']
         for i in range(len(unselect_list)):
-            file = open('./authors_info_lists/' + unselect_list[i] + '.txt', 'r')
+            file = open('../data/authors_info_lists/' + unselect_list[i] + '.txt', 'r')
             r = json.loads(file.read())
             file.close()
             if r['name'] not in all_info:
@@ -593,8 +593,8 @@ def show_histogram(orselect_list, select_list, unselect_list, v_select_list, v_u
 def show_coauthors(name):  ### Click the author's name to show his co-authors
     res = {}
 
-    if os.path.exists("./authors_info_lists/" + name + ".txt"):
-        file = open("./authors_info_lists/" + name + ".txt", 'r')
+    if os.path.exists("../data/authors_info_lists/" + name + ".txt"):
+        file = open("../data/authors_info_lists/" + name + ".txt", 'r')
         author_info = json.loads(file.read())
         file.close()
         res['num'] = '0'
@@ -1501,8 +1501,8 @@ def check_venue(name):   ### check input venue information
         return jsonify(res)
 
 def check_coauthor(id, urlname, name):    ### check clicked coauthor
-    if os.path.exists("./authors_info_lists/" + name + ".txt"):
-        file = open("./authors_info_lists/" + name + ".txt", 'r')
+    if os.path.exists("../data/authors_info_lists/" + name + ".txt"):
+        file = open("../data/authors_info_lists/" + name + ".txt", 'r')
         author_info = json.loads(file.read())
         file.close()
         res = {}
