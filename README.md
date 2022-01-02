@@ -6,7 +6,7 @@ This repository contains the code package for the paper "SD2: Slicing and Dicing
 You need to perform the following steps to use the tool:  
 1. Install the required packages and run the **flask server**.  
 2. Compile the **SD2Query** library and make it discoverable by the flask server.  
-3. Open the **web interface** (interface/scholarlens.html) using Chrome.  
+3. Open the **web interface** (interface/SD2.html) using Google Chrome.  
 4. **(Option 1)** Use cached external data file (e.g., data/christosjiawei.txt) for queries.  
 5. **(Option 2)** Download MAG data and build the **MySQL database** for queries from SD2Query.  
 
@@ -35,9 +35,9 @@ The SD2Query library is a python library written in C++ to speedup the queries t
 **Dependencies**: The library requires Python and Boost to export the C++ library to Python. It also requires the MySQL C++ connector library if compiled with the ``USE_MYSQL`` compilation option.  
 
 ## Web interface
-The web interface is written in html, css and javascript. It determines the layout of the interface and page behavior. ``scholarlens.html / html.css / sunburst.css`` files determine the layout of three views in the paper. The interaction of scholar view and publication view are written in ``myjs.js``. For the hierarchical histogram view, ``sunburst.js`` is the master control for both upper and lower histograms, which is the start of redrawing hirarchical histogram. It determines the scale methods, attribute lock, and also bar alignment. All the detailed upper and lower histograms, such as partition the paper set, bar grouping and minimap are implemented in ``sunburst_*.js``. Hints are added by ``add_hints.js``.   
+The web interface is written in html, css and javascript. It determines the layout of the interface and page behavior. ``SD2.html / html.css / sunburst.css`` files determine the layout of three views in the paper. The interaction of scholar view and publication view are written in ``myjs.js``. For the hierarchical histogram view, ``sunburst.js`` is the master control for both upper and lower histograms, which is the start of redrawing hirarchical histogram. It determines the scale methods, attribute lock, and also bar alignment. All the detailed upper and lower histograms, such as partition the paper set, bar grouping and minimap are implemented in ``sunburst_*.js``. Hints are added by ``add_hints.js``.   
 **IP address settings**: You need to change the 1st line in myjs.js IP_address to your IP address. 
-**Usage**: You should open ``interface/scholarlens.html`` using Chrome, when ``server.py`` is running.
+**Usage**: You should open ``interface/SD2.html`` using Google Chrome, when ``server.py`` is running.
 
 <!-- **Introduction of the interface files**:  
 - scholarlens.html / html.css / sunburst.css: Design website layout  
