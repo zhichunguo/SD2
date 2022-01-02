@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <meta charset="utf-8">
+    <title>ScholarLens</title>
+    <link rel="stylesheet" type="text/css" href="html.css">
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" type="text/css" href="sunburst.css">
+</head>
+<body>
+    <div class="ui-header">
+        <div class="ui-header-container">
+            <div style="float:left; position:relative; align-items: center; display: flex;">
+                <span class="add_name">Author Name:</span>
+                <input class="input_rec" type = "text" id="author_name">
+                <button class="btn add_name_button" type="submit" onclick="addName()">Add</button>
+                <!-- <select id="author_name">
+                    <option value=" "></option>
+                    <option value="Jiawei Han">Jiawei Han</option>
+                    <option value="Christos Faloutsos">Christos Faloutsos</option>
+                    <option value="Yizhou Sun">Yizhou Sun</option>
+                    <option value="Xifeng Yan">Xifeng Yan</option>
+                    <option value="Jure Leskovec">Jure Leskovec</option>
+                    <option value="Hanghang Tong">Hanghang Tong</option>
+                    <option value="Julian McAuley">Julian McAuley</option>
+                    <option value="Jure Leskovec">Jure Leskovec</option>
+                    <option value="Huamin Qu">Huamin Qu</option>
+                    <option value="Yoshua Bengio">Yoshua Bengio</option>
+                    <option value="John Stasko">John Stasko</option>
+                    <option value="Jian Zhao">Jian Zhao</option>
+                    <option value="Yoshua Bengio">Yoshua Bengio</option>
+                    <option value="Ian Goodfellow">Ian Goodfellow</option>
+                    <option value="Aaron Courville">Aaron Courville</option>
+                    <option value="Lawrence Hall">Lawrence Hall</option>
+                    <option value="Nitesh V Chawla">Nitesh V Chawla</option>
+                    <option value="Kevin W. Bowyer">Kevin W. Bowyer</option>
+                    <option value="Yang Yang">Yang Yang</option>
+                    <option value="Yuxiao Dong">Yuxiao Dong</option>
+                    <option value="Chao Huang">Chao Huang</option>
+                    <option value="Chuxu Zhang">Chuxu Zhang</option>
+                    <option value="Dhabaleswar K. Panda">Dhabaleswar K. Panda</option>
+                    <option value="Ian T. Foster">Ian T. Foster</option>
+                    <option value="Jack Dongarra">Jack Dongarra</option>
+                    <option value="Jidong Zhai">Jidong Zhai</option>
+                    <option value="Torsten Hoefler">Torsten Hoefler</option>
+                    <option value="William Gropp">William Gropp</option>
+                </select> -->
+            </div>
+            <div style="float:left; position:relative; left:10%; align-items: center; display: flex;">
+                <span class = "add_venue">Venue Name:</span>
+                <input class="input_rec" type = "text" id = "venue_name">
+                <button class="btn add_venue_name_button" type = "submit" onclick="addVenueName()">Add</button>
+                <!-- <select id="venue_name">
+                    <option value=" "></option>
+                    <option value="TVCG">TVCG</option>
+                    <option value="CHI">CHI</option>
+                </select> -->
+            </div>          
+            <a id="header_question" href="scholarlens introduction.pdf" style="float: right; position:relative; color:rgb(102, 184, 100); font-size: 12px; text-decoration:none">help?</a>
+            <span class="header" style="float: right; position:relative; right: 1%">SD<sup>2</sup> </span>
+        </div>
+    </div>
+    <div class="ui-container">
+        <div class="ui-row">
+
+        <div class="ui-column ui-layout-center">
+            <div id="set-vis-container" data-height-ratio="1" class="fixed-y-container">
+
+            <!--<div class="matrixTableContainer">-->
+            <div style="display: table;">
+                <div style="display: table-row;">
+                <div style="display: table-cell">
+                    <div id="headerVis">
+                        <svg id = "num_list" style="width:540; height:155"></svg>
+                    <!--style="width:200px"-->
+                    </div>
+                </div>
+                </div>
+                <div style="display: table-row">
+                    <div style="display: table-cell">
+                        <div id="bodyVis" style = "height: 450px">
+                            <svg id="cicless" style="width:540; height:440"></svg>
+                        </div>
+                        <div id="hints" style = "height: 40px; width: 540px;"></div>
+                        <svg id="legend" style = "height: 15px; width: 540px;">
+                            <!-- <g id = "legends"></g> -->
+                            <rect x = 0 height= "13" width = "13" style="fill: rgb(102, 184, 100)"></rect>
+                            <text x="20" y="10" font-size = "12" font-family = "Arial">Unselected histogram</text>
+                            <rect x = 180 height= "13" width = "13" style="fill: rgb(242,192,192)"></rect>
+                            <text x="200" y="10" font-size = "12" font-family = "Arial">Selected upper histogram</text>
+                            <rect x = 360 height= "13" width = "13" style="fill: rgb(110, 177, 211)"></rect>
+                            <text x="380" y="10" font-size = "12" font-family = "Arial">Selected lower histogram</text>
+                        </svg>
+                    </div>
+                </div> 
+            </div>
+            </div>
+        </div>
+        <div class="ui-column ui-layout-east">
+            <div id="show_details">
+                <div id = "sunburst_map" style="width:750px;height:650px"></div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- <div class="add_svg">
+        <button onclick="add_svg('num_list')">add_first_svg</button>
+        <button onclick="add_svg('cicless')">add_second_svg</button>
+        <button onclick="add_svg('show_sunbursts')">add_third_svg</button>
+    </div> -->
+             
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="js/d3v4.js"></script>
+    <script src="js/myjs.js"></script>
+    <script src="js/sunburst.js"></script>
+    <script src="js/sunburst_drag.js"></script>
+    <script src="js/sunburst_drag_logo.js"></script>
+    <script src="js/sunburst_group_histogram.js"></script>
+    <script src="js/sunburst_up_second.js"></script>
+    <script src="js/sunburst_up.js"></script>
+    <script src="js/sunburst_down_second.js"></script>
+    <script src="js/sunburst_down.js"></script>
+    <script src="js/add_hints.js"></script>
+    <!--<script src="js/draw_svg.js"></script> -->
+</body>
+</html>
