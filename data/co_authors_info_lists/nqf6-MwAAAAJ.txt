@@ -1,1 +1,0 @@
-{"titles": ["Recognition of image-orientation-based iris spoofing", "Counteracting presentation attacks in face, fingerprint, and iris recognition"], "ids": ["ab868740-4ac3-4d9d-a480-1558cf02a069"]}

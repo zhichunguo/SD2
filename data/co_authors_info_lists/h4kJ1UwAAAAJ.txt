@@ -1,1 +1,0 @@
-{"titles": ["A survey on graph processing accelerators: Challenges and opportunities", "On-the-fly parallel data shuffling for graph processing on OpenCL-based FPGAs", "Deploying hash tables on die-stacked high bandwidth memory", "G", "Is FPGA Useful for Hash Joins?", "OBFS: OpenCL Based BFS Optimizations on Software Programmable FPGAs"], "ids": []}

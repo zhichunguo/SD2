@@ -1,1 +1,0 @@
-{"titles": ["All Your {GPS} Are Belong To Us: Towards Stealthy Manipulation of Road Navigation Systems", "A practical GPS location spoofing attack in road navigation scenario", "Investigations on the local structures of Cu", "Poster: Security Analysis of Multi-Sensor Fusion based Localization in Autonomous Vehicles"], "ids": ["d9bbc597-1cef-454e-8bad-4205dd04a6bc"]}

@@ -7,7 +7,7 @@ You need to perform the following steps to use the tool:
 1. Install the required packages and run the **flask server**.  
 2. Compile the **SD2Query** library and make it discoverable by the flask server.  
 3. Open the **web interface** (interface/SD2.html) using Google Chrome.  
-4. **(Option 1)** Use cached external data file (e.g., data/christosjiawei.txt) for queries.  
+4. **(Option 1)** Use cached external data file (e.g., data/christosjiawei.txt) for queries. Then you can explore Christos Faloutsos and Jiawei Han's case in our ppaer. 
 5. **(Option 2)** Download MAG data and build the **MySQL database** for queries from SD2Query.  
 
 The detailed instructions are stated in the following sections.
@@ -22,7 +22,7 @@ The SD2Query library is a python library written in C++ to speedup the queries t
 
 **Database setting**: You need to define the database information, such as the MySQL server address, user name, user password, and database name, at the beginning of the file *MySQLPaperQuery.h*.
 
-**Options**: The library can be compiled with two options by defining MACROS ``USE_MYSQL`` and ``MYSQL_PAPRE_QUERY_DEBUG``.
+**Compilation options**: The library can be compiled with two options by defining MACROS ``USE_MYSQL`` and ``MYSQL_PAPRE_QUERY_DEBUG``.
 
 ``USE_MYSQL``: Compile the library with the ability to query MySQL server. If this macro is not defined, the library can still run with information provided in previously saved external files. In that case, the server will not require the MySQL server and the database to run.
 

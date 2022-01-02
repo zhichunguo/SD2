@@ -1,1 +1,0 @@
-{"titles": ["Scientific benchmarking of parallel computing systems: twelve ways to tell the masses when reporting performance results", "Notified access: Extending remote memory access programming models for producer-consumer synchronization"], "ids": ["48772bc6-3250-48bd-b682-68e165efefd2", "d79b09d9-b84b-4b2d-b2aa-387f4bd4ff71"]}

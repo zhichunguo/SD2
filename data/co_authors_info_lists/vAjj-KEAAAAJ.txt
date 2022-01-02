@@ -1,1 +1,0 @@
-{"titles": ["Presenting using two-handed interaction in open space", "Integrating 2D mouse emulation with 3D manipulation for visualizations on a multi-touch table", "Human interfaces-Finger tracking applications", "Interactive displays in our homes, now or in the future"], "ids": ["a6825127-99ee-4c56-a368-efe33a54918b", "eb196b6c-2d52-49d0-bf3c-76479e818d82"]}

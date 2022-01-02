@@ -1,1 +1,0 @@
-{"titles": ["Near linear-time community detection in networks with hardly detectable community structure", "Ties That Bind-Characterizing Classes by Attributes and Social Ties", "Protecting Sensitive Attributes via Generative Adversarial Networks", "Improved bounds on information dissemination by Manhattan Random Waypoint model"], "ids": ["71cdfce0-61b5-495d-938f-def421ff7f27"]}

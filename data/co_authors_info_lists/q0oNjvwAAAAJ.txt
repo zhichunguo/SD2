@@ -1,1 +1,0 @@
-{"titles": ["Aurigo: an interactive tour planner for personalized itineraries"], "ids": ["d669a0ef-96d0-4827-b983-cc63e0f5020e"]}

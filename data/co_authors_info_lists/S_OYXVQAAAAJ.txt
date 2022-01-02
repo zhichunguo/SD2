@@ -1,1 +1,0 @@
-{"titles": ["What to Do Next: Modeling User Behaviors by Time-LSTM", "Memen: Multi-layer embedding with memory networks for machine comprehension", "Macnet: Transferring knowledge from machine comprehension to sequence-to-sequence models", "Keyword-based Query Comprehending via Multiple Optimized-Demand Augmentation"], "ids": []}

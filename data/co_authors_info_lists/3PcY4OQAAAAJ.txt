@@ -1,1 +1,0 @@
-{"titles": ["Interaction+: Interaction enhancement for web-based visualizations", "STAD-HD: Spatial Temporal Anomaly Detection for Heterogeneous Data through Visual Analytics", "SignalTreeExplorer: A Multi-Tree Comparison System for Visually Exploring Time Sequential Communication Data"], "ids": []}

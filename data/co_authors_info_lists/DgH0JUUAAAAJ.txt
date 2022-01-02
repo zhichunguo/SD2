@@ -1,1 +1,0 @@
-{"titles": ["Combining modality specific deep neural networks for emotion recognition in video", "Emonets: Multimodal deep learning approaches for emotion recognition in video", "Facial expression analysis based on high dimensional binary features"], "ids": ["e557fbfa-c142-4aae-8c77-dac077a02b7d", "01d2e4ff-ce43-4b1a-8770-43a021c2cc2b", "a450e3b8-e294-44b0-897d-dd89f1f0aa29"]}

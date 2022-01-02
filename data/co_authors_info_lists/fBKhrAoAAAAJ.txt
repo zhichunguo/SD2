@@ -1,1 +1,0 @@
-{"titles": ["A meta-scheduler for the par-monad: composable scheduling for the heterogeneous cloud", "Automatically generating coarse grained software pipelining from declaratively specified communication", "A meta-scheduler for the Par-monad"], "ids": ["fe7bcc1c-4716-4c78-bc33-ccd5f3d3ba27"]}

@@ -1,1 +1,0 @@
-{"titles": ["Selection bias in news coverage: learning it, fighting it", "Latent Structure in Collaboration: the Case of Reddit r/place", "Bartering Books to Beers: a Recommender System for Exchange Platforms", "Coloring in the Links: Capturing Social Ties as They are Perceived"], "ids": ["5d42010d-fec7-40e7-9a9b-e03176e5f026"]}

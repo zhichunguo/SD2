@@ -37,7 +37,7 @@ def index():
 def connectMYSQL(dbname):
     db = MySQLdb.connect(host = "127.0.0.1",
                          user = "root",
-                         passwd = "vis556623",
+                         passwd = "password",
                          db = dbname)
     cur = db.cursor()
     return db, cur
