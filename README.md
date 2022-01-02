@@ -7,7 +7,7 @@ You need to perform the following steps to use the tool:
 1. Install the required packages and run the **flask server**.  
 2. Compile the **SD2Query** library and make it discoverable by the flask server.  
 3. Open the **web interface** (interface/SD2.html) using Google Chrome.  
-4. **(Option 1)** Use cached external data file (e.g., data/christosjiawei.txt) for queries.  
+4. **(Option 1)** Use cached external data file (e.g., data/christosjiawei.txt) for queries. Then you can explore Christos Faloutsos and Jiawei Han's case in our ppaer. 
 5. **(Option 2)** Download MAG data and build the **MySQL database** for queries from SD2Query.  
 
 The detailed instructions are stated in the following sections.
