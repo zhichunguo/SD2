@@ -1,5 +1,5 @@
 requests
-re
+regex
 flask
 lxml
 pymysql
