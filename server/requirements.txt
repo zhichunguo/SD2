@@ -3,5 +3,6 @@ regex
 flask
 lxml
 pymysql
-sys
-imp
+imps
+Flask-Cors
+
