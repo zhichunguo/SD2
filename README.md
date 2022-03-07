@@ -59,3 +59,35 @@ We use the data from [Microsoft Academic Graph (MAG)](https://www.microsoft.com/
 
 ## Easiest Way to Use the Web Interface
 If you only want to experiment with the web interface, you can skip all dataset download and code compilation. In this case, you only need to download the interface folder and open *interface/SD2.html* using Chrome. The initial configuration in the interface will connect to our VPS server, which hosts a toy example dataset containing data of Jiawei Han and Christos Faloutsos. Please contact us if the server is not responding correctly.
+
+
+## Step-by-step instuction to use this tool in linux
+### Prepare server
+#### Prepare python environment
+``cd server``
+``apt install python``
+``apt install pip``
+``pip install -r requirements``
+
+#### SD2Query compilation
+``cd ../SD2Query``
+``pip install PyMySQL==0.7.11``
+``apt install cmake``
+``sudo apt-get install mysql-client mysql-server``
+``sudo apt-get install libmysqlclient-dev``
+``sudo apt-get install openssl``
+``sudo apt-get install libboost-dev``
+``wget -O boost_1_65_1.tar.gz https://sourceforge.net/projects/boost/files/boost/1.65.1/boost_1_65_1.tar.gz/download``
+``tar xzvf boost_1_65_1.tar.gz``
+``cd boost_1_65_1/``
+``./bootstrap.sh --prefix=/usr/include``
+``./b2``
+``sudo ./b2 install``
+``cmake ./``
+
+Then ``cd ../server``, run ``python server.py`` should can work.
+
+### Prepare mysql
+
+
+### Interface
