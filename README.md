@@ -65,29 +65,54 @@ If you only want to experiment with the web interface, you can skip all dataset 
 ### Prepare server
 #### Prepare python environment
 ``cd server``
+
 ``apt install python``
+
 ``apt install pip``
+
 ``pip install -r requirements``
+
 
 #### SD2Query compilation
 ``cd ../SD2Query``
+
 ``pip install PyMySQL==0.7.11``
+
 ``apt install cmake``
+
 ``sudo apt-get install mysql-client mysql-server``
+
 ``sudo apt-get install libmysqlclient-dev``
+
 ``sudo apt-get install openssl``
+
 ``sudo apt-get install libboost-dev``
+
 ``wget -O boost_1_65_1.tar.gz https://sourceforge.net/projects/boost/files/boost/1.65.1/boost_1_65_1.tar.gz/download``
+
 ``tar xzvf boost_1_65_1.tar.gz``
+
 ``cd boost_1_65_1/``
+
 ``./bootstrap.sh --prefix=/usr/include``
+
 ``./b2``
+
 ``sudo ./b2 install``
+
 ``cmake ./``
 
 Then ``cd ../server``, run ``python server.py`` should can work.
 
 ### Prepare mysql
-
+1. Download the paper sets from [Microsoft Academic Graph (MAG)](https://www.microsoft.com/en-us/research/project/open-academic-graph/) and save the files under build_database/mag_papers folder. We gives an example file (mag_papers_1.txt) in this folder to test.
+2. compile MYSQL and run to build the mysql database and insert datasets into it automatically.
 
 ### Interface
+1. Change the fist line of interface/js/myjs.js to the IP address of your linux.
+2. Open interface/SD2.html using Chrome. If there is no display with your linux, you can follow the instruction of [this guidance](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-20-04) to build an apache web server on the linux. Then you can using http://yourIPAdress/SD2.html in any chrome of other computers to access the server.
+
+### Important tips
+There are two parts of the server query. 1) When you input a new author name in the SD2.html to query, the server need to obtain this authors' all the information listed in the google scholar using a crawler. Then save these information and his co-authors' information into ``data`` folder. 2) The server need to query all the related papers' information from mysql database. Then save these information. If some papers' information are not save in the database, these papers will not be shown in the website. We save all the papers' information of Jiawei Han' group utilized in our paper in ``server/christosjiawei.txt``, which the server do not need to query using mysql database again.
+
+We can not promise our crawler can work in all environment or machines. We provide our pre-crawled all the authors' google scholar pages in ``data/authors_info_lists``. You can query all the authors in this folder. For the mysql part, you can use ``http://YourIPAddress:1234/readfile?name=christosjiawei.txt`` to preload Jiawei's papers, then you do not need to insert all his papers into your mysql database.
