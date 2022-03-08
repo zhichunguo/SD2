@@ -76,8 +76,6 @@ If you only want to experiment with the web interface, you can skip all dataset 
 #### SD2Query compilation
 ``cd ../SD2Query``
 
-``pip install PyMySQL==0.7.11``
-
 ``apt install cmake``
 
 ``sudo apt-get install mysql-client mysql-server``
