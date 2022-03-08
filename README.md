@@ -24,17 +24,17 @@ The server is a Flask server written in python. It listens to port 1234 for requ
 ## SD2Query Package
 The SD2Query package is a python package written in C++ to speed up the queries to the MySQL database. The package will cache all queried information in RAM to avoid repeated queries to the MySQL server. It can also write the cached information to an external file, and restore information from the file.
 
-**Database setting**: You need to define the database information, such as the MySQL server address, user name, user password, and database name, at the beginning of the file *MySQLPaperQuery.h*.
-
-**Compilation options**: The package can be compiled with two options by defining MACROS ``USE_MYSQL`` and ``MYSQL_PAPRE_QUERY_DEBUG``.
-
-``USE_MYSQL``: Compile the package with the ability to query MySQL server. If this macro is not defined, the package can still run with the information provided in previously saved external files. In that case, the server will not require the MySQL server and the database to run.
-
-``MYSQL_PAPRE_QUERY_DEBUG``: Compile the package with the ability to produce log files for debugging.
+**Database setting**: You need to define the database information, such as the MySQL server address, user name, user password, and database name, at the beginning of the file *utility.h*.
 
 **Reading/writing external files**: You may send a request to read or write a file through the Flask server. The Flask server will then send the request to the package. To write the cached information to a file, you need to run ``host_address:1234/writefile?name=file.txt``, where ``host_address`` is the IP address of the host and *file.txt* is the name of the file. To read information from a file to cache, you may run ``host_address:1234/readfile?name=file.txt``.
 
 **Compilation**: The SD2Query package can be compiled using the *CMakeList.txt* file. For *Linux/MacOS*, you may simply run ``cmake ./`` to produce a Makefile, and run ``make`` to compile. For *Windows*, you may use cmake to produce a visual studio project for compilation. A successful compilation will create a dynamic library, and you need to copy that to the directory containing server.py to ensure the package is discoverable by python. 
+
+**Compilation options**: The package can be compiled with two options by defining MACROS ``USE_MYSQL`` and ``MYSQL_PAPRE_QUERY_DEBUG``.
+
+``USE_MYSQL``: Compile the package with the ability to query MySQL server. If this macro is not defined, the package can still run with the information provided in previously saved external files. In that case, the server will not require the MySQL server and the database to run. Please refer to the corresponding ``SD2Query/CMakeLists.txt`` for detail.
+
+``MYSQL_PAPRE_QUERY_DEBUG``: Compile the package with the ability to produce log files for debugging.
 
 **Dependencies**: The package requires Python and Boost to export the C++ library to Python. It also requires the MySQL Connector/C++ library if compiled with the ``USE_MYSQL`` compilation option. In that case, you will need to provide the corresponding include directory and static library in *CMakeLists.txt*. Please follow the instructions in *CMakeLists.txt*.
 
@@ -61,56 +61,77 @@ We use the data from [Microsoft Academic Graph (MAG)](https://www.microsoft.com/
 If you only want to experiment with the web interface, you can skip all dataset download and code compilation. In this case, you only need to download the interface folder and open *interface/SD2.html* using Chrome. The initial configuration in the interface will connect to our VPS server, which hosts a toy example dataset containing data of Jiawei Han and Christos Faloutsos. Please contact us if the server is not responding correctly.
 
 
-## Step-by-step instuction to use this tool in linux
-### Prepare server
+## Step-by-step Instruction to Compile and Run This Tool on Linux
+The steps are tested on a clean Ubuntu 18.04 machine. Python 2.7, CMake 3.10, Boost 1.65.1, and PyMySQL 0.7.11 are installed for testing. The following lists all commands used for building the tool, assuming that you start from the root directory containing the folders *server*, *SD2Query*, *build_database*.
+### Build the server
 #### Prepare python environment
-``cd server``
+Please execute the following commands in the listed order:
 
-``apt install python``
+``cd server``: switch to the *server* folder.
 
-``apt install pip``
+``apt install python``: install *Python 2.7*.
 
-``pip install -r requirements``
+``apt install pip``: install *pip* for package installation.
 
+``pip install -r requirements``: install the packages listed in *requirements.txt*.
 
-#### SD2Query compilation
-``cd ../SD2Query``
+#### Compile SD2Query library
+Please execute the following commands in the listed order:
 
-``apt install cmake``
+``cd ../SD2Query``: switch to the *SD2Query* folder from the *server* folder.
 
-``sudo apt-get install mysql-client mysql-server``
+``apt install cmake``: install CMake for producing the Makefile.
 
-``sudo apt-get install libmysqlclient-dev``
+**Install Boost library (required for exporting C++ to Python)**
 
-``sudo apt-get install openssl``
+``wget -O boost_1_65_1.tar.gz https://sourceforge.net/projects/boost/files/boost/1.65.1/boost_1_65_1.tar.gz/download``: download the package file. You may find it elsewhere as well. 
 
-``sudo apt-get install libboost-dev``
+``tar xzvf boost_1_65_1.tar.gz``: untar the file in the *boost_1_65_1* folder.
 
-``wget -O boost_1_65_1.tar.gz https://sourceforge.net/projects/boost/files/boost/1.65.1/boost_1_65_1.tar.gz/download``
+``cd boost_1_65_1/``: switch to the boost folder for compilation.
 
-``tar xzvf boost_1_65_1.tar.gz``
+``./bootstrap.sh --prefix=/usr/include``: set the folder to install boost.
 
-``cd boost_1_65_1/``
+``./b2``: build boost.
 
-``./bootstrap.sh --prefix=/usr/include``
+``sudo ./b2 install``: perform the actual installation.
 
-``./b2``
+Please note that we test ``apt-get install libboost-all-dev`` to install Boost, but the installed version does not work in our testing.
 
-``sudo ./b2 install``
+**Install MySQL (optional)**
 
-``cmake ./``
+``sudo apt-get install mysql-client mysql-server``: install MySQL executables. Then you should be able to run ``mysql`` and create your MySQL account and database. The user name, password, database name should be updated in the *utility.h*.
 
-Then ``cd ../server``, run ``python server.py`` should can work.
+``sudo apt-get install libmysqlclient-dev``: install the development library. You should find the header files in */usr/include/mysql/* and the library in */usr/lib/x86_64-linux-gnu/*. If the files appear in different locations, please update line 34 and 37 in *SD2Query/CMakeLists.txt*.
 
-### Prepare mysql
-1. Download the paper sets from [Microsoft Academic Graph (MAG)](https://www.microsoft.com/en-us/research/project/open-academic-graph/) and save the files under build_database/mag_papers folder. We gives an example file (mag_papers_1.txt) in this folder to test.
-2. compile MYSQL and run to build the mysql database and insert datasets into it automatically.
+``sudo apt-get install openssl``: install OpenSSL for MySQL.
+
+``sudo apt-get install libmysqlcppconn-dev``: install MySQL C++ Connector library. This allows executing MySQL queries in C++ codes. You should find the library in */usr/lib/x86_64-linux-gnu/*.
+
+**Build SD2Query library**
+``cmake ./``: create Makefile.
+
+``make``: build the library. You should find a dynamic library named *SD2Query.so*.
+
+``cp SD2Query.so ../server``: copy the library to the folder containing the Python server.
+
+### Run the server
+``cd ../server``: switch to the *server* folder from the *SD2Query* folder.
+
+``python server.py``: run the server. You may use ``nohup python server.py`` to run the Python server in background, which is useful especially when you are using a remote machine as the server.
+
+### Prepare MySQL database (optional)
+1. Download the Microsoft Academic Graph dataset from [Open Academic Graph](https://www.aminer.cn/oag-2-1) and save the files to the *build_database/mag_papers* folder. The folder currently contains an example file (mag_papers_1.txt) for testing purpose. 
+2. Compile **BuildDatabase** in the *build_database* directory. The compiled executable will automatically create the tables in MySQL database, read the *mag_papers_\*.txt* files, and fill the data into the MySQL tables. The compilation can be easily done with ``cmake ./`` (to create a Makefile in the build_database) and ``make`` (to create the executable), assuming you already follows the above steps to install MySQL.
+
+### Use local data file
+Use ``http://YourIPAddress:1234/readfile?name=christosjiawei.txt`` to load our example data file (*christosjiawei.txt*).
+
+Use ``http://YourIPAddress:1234/writefile?name=file_name.txt`` to write the cached data into a file (*file_name.txt*). Reading the data file is more efficient than MySQL queries.
 
 ### Interface
-1. Change the fist line of interface/js/myjs.js to the IP address of your linux.
-2. Open interface/SD2.html using Chrome. If there is no display with your linux, you can follow the instruction of [this guidance](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-20-04) to build an apache web server on the linux. Then you can using http://yourIPAdress/SD2.html in any chrome of other computers to access the server.
+1. You should update the IP address and the port where the server is running and discoveable. To do this, change the fist line in interface/js/myjs.js.
+2. If you are running the server locally, you may simply open interface/SD2.html with Chrome. Otherwise, if you are running the server on a remote machine, you may follow the instruction of [this guidance](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-20-04) to build an apache web server on Linux. Then you can use http://yourIPAdress/SD2.html in any chrome of other computers to access the server.
 
 ### Important tips
-There are two parts of the server query. 1) When you input a new author name in the SD2.html to query, the server need to obtain this authors' all the information listed in the google scholar using a crawler. Then save these information and his co-authors' information into ``data`` folder. 2) The server need to query all the related papers' information from mysql database. Then save these information. If some papers' information are not save in the database, these papers will not be shown in the website. We save all the papers' information of Jiawei Han' group utilized in our paper in ``server/christosjiawei.txt``, which the server do not need to query using mysql database again.
-
-We can not promise our crawler can work in all environment or machines. We provide our pre-crawled all the authors' google scholar pages in ``data/authors_info_lists``. You can query all the authors in this folder. For the mysql part, you can use ``http://YourIPAddress:1234/readfile?name=christosjiawei.txt`` to preload Jiawei's papers, then you do not need to insert all his papers into your mysql database.
+The query consists of two major steps: crawling data from Google Scholar and querying details from Microsoft Academic Graph usign MySQL. 1) When you enter a new scholar name in the SD2.html for query, the server will attempt to obtain this authors' all the information listed in Google Scholar using a crawler. The crawled data of this scholar and her co-authors' information will be saved into ``data`` folder. Please note that the crawler may fail when Google update their webpage structure or implement new anti-crawling mechanism. We provide our pre-crawled all the authors' google scholar pages in ``data/authors_info_lists``. If the crawler fails to work, you may still experiment our tool with these pre-crawled data. 2) The server will query all the related papers' information from mysql database and cache the queried results. For the papers that are not found in the MySQL database, the corresponding information will not be shown in the visualization. If the server is not compiled with MySQL or the MySQL database is not filled, you may rely on the local file for the query. Please refer to the above "Use local data file" session.
