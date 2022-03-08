@@ -15,23 +15,11 @@
 // any data in the database, and simply relies on the temporary file.
 //********************************************************************************
 
-//define this macro to query from mysql server;
-//otherwise, this header only query from temp files
-//#define USE_MYSQL
-
 //define this macro to produce 
 #define MYSQL_PAPRE_QUERY_DEBUG
 
-//the parameters used to connect to your MySQL server
-//PLEASE UPDATE them with your own information
-#define MySQLServerAddr "localhost"
-#define MySQLUserName "root"
-#define MySQLPassword "password"
-//make sure you create the database before calling functions in this file
-#define MySQLDatabaseName "open_academic_graph" 
-
 #ifdef USE_MYSQL
-#include "mysql.h"
+#include <mysql/mysql.h>
 #endif
 #include "utility.h"
 #include <cstdlib>
@@ -106,12 +94,7 @@ typedef std::map<std::string, int> StringMap;
 //manage venue name to the venue information (abbrevation and CCF rank)
 class VenueInfoMap {
 public:
-#ifdef USE_MYSQL
-	VenueInfoMap(MYSQL* conn)
-		:mConn(conn)
-#else
 	VenueInfoMap()
-#endif
 	{
 		mIgnoreWords.insert("is");
 		mIgnoreWords.insert("of");
@@ -218,15 +201,14 @@ public:
 //query paper info from MySQL server or from a previously saved temporary file
 class MySQLPaperQuery {
 public:
-#ifdef USE_MYSQL
-	MySQLPaperQuery(MYSQL* conn)
-		:mConn(conn),
-		mVenues(VenueInfoMap(conn)) 
-#else
 	MySQLPaperQuery()
 		:mVenues(VenueInfoMap())
-#endif 	
 	{
+#ifdef USE_MYSQL
+		mConn = new MYSQL();
+		connectMySQL(*mConn);
+		mVenues.setConnection(mConn);
+#endif
 		mPapers.reserve(250000);
 
 		mColumnName["Individual Paper"] = "title";
@@ -1243,30 +1225,5 @@ public:
 	MYSQL* mConn;
 #endif
 };
-
-//a utility function to connect to the mysql server
-#ifdef USE_MYSQL
-inline bool connectMySQL(MYSQL& conn) {
-	if (0 == mysql_library_init(0, NULL, NULL)) {
-		std::cout << "mysql_library_init() succeed" << std::endl;
-	} else {
-		std::cout << "mysql_library_init() failed" << std::endl;
-		return false;
-	}
-	if (NULL != mysql_init(&conn)) {
-		std::cout << "mysql_init(mydata) succeed" << std::endl;
-	} else {
-		std::cout << "mysql_init(mydata) failed" << std::endl;
-		return false;
-	}
-	if (NULL != mysql_real_connect(&conn, MySQLServerAddr, MySQLUserName, MySQLPassword, MySQLDatabaseName, 0, NULL, 0)) {
-		std::cout << "mysql_real_connect() succeed" << std::endl;
-	} else {
-		std::cout << "mysql_real_connect() failed" << std::endl;
-		return false;
-	}
-	return true;
-}
-#endif
 
 #endif //MYSQL_PAPER_QUERY_H
