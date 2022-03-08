@@ -109,6 +109,7 @@ Please note that we test ``apt-get install libboost-all-dev`` to install Boost, 
 ``sudo apt-get install libmysqlcppconn-dev``: install MySQL C++ Connector library. This allows executing MySQL queries in C++ codes. You should find the library in */usr/lib/x86_64-linux-gnu/*.
 
 **Build SD2Query library**
+
 ``cmake ./``: create Makefile.
 
 ``make``: build the library. You should find a dynamic library named *SD2Query.so*.
